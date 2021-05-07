@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainGameFragment"
+    android:id="@+id/fragment_mainGame_LL"
+    android:weightSum="100">
+
+    <com.example.rectangletacticiankotlin.MySurfaceView
+        android:id="@+id/mySurfaceView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="98"/>
+
+    <TextView
+        android:id="@+id/exceptionTV"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        android:weightSum="2">
+
+        <Button
+            android:id="@+id/rotationButton"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="@string/rotationButton_text"
+            android:textColor="#FF5722"
+            android:textSize="12sp" />
+
+        <Button
+            android:id="@+id/endPlayerTurnButton"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="@string/endPlayerProgressButton_text"
+            android:textColor="#FF5722"
+            android:textSize="12sp" />
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,3 +1,53 @@
 <resources>
     <string name="app_name">RectangleTacticianKotlin</string>
+    <string name="program_name">Rectangle Tactic!</string>
+
+    <string name="settingsActivity_name">Настройки</string>
+    <string name="regulationsActivity_name">Правила</string>
+
+    <string name="startButton_text">Начать игру</string>
+    <string name="regulationButton_text">Правила</string>
+    <string name="settingsButton_text">Настройки</string>
+
+    <string name="warning">Внимание!</string>
+    <string name="warning_text">Настройки нельзя будет поменять до конца игры. Вы хотите продолжить?</string>
+    <string name="yes">Да</string>
+    <string name="no">Нет</string>
+
+    <string name="regulations_title">Правила</string>
+    <string name="regulationsMain_text"><b>Правила не сложные, но их стоит запомнить:</b></string>
+    <string name="regulations1_text">1. Игра расчитана на <b>2-4 игрока на одном устройстве</b></string>
+    <string name="regulations2_text">2. В начале своего хода каждый игрок бросает 2 игральных кубика</string>
+    <string name="regulations3_text">3. Генерируется прямоугольник (или квадрат) со сторонами, полученными от кубиков</string>
+    <string name="regulations4_text">
+        4. Вам следует поместить прямоугольник на клеточную территорию по <b>следующим правилам</b>: \n
+        \t 4.1. Первые прямоугольники ставятся в противоположные углы поля. \n
+        \t 4.2. Следующий прямоугольник должен быть присоединён к вашей существующей территории. \n
+        \t 4.3. Сторона размещаемого прямоугольника должна либо включать в себя сторону уже имеющейся на поле фигуры, либо самой быть полностью включённой в сторону уже имеющейся на поле фигуры, т.е. не выходить за границы
+    </string>
+    <string name="regulations5_text">5. После выставления прямоугольника <b>надо нажать кнопку завершения хода</b>, и ход перейдёт к следующему игроку</string>
+    <string name="regulations6_text">6. Следущий игрок повторяет пункты с 1 по 5</string>
+    <string name="regulations7_text">7. Выигрывает игрок, захвативший <b>больше</b> территории</string>
+    <string name="regulationsPS_text">(P.S. Вы можете настроить размер поля и количество игроков в настрйках)</string>
+
+    <string name="settingsDescription_text">Выберете настройки, с которыми будете играть. Их нельзя будет изменить во время игры.</string>
+    <string name="settingsPlayerCount_text">Количество игроков:</string>
+    <string name="fieldSize_text">Размеры поля от 20 до 60:</string>
+    <string name="fieldWidth_text">Введите ширину поля</string>
+    <string name="fieldHeight_text">Введите высоту поля</string>
+    <string name="fieldSizeError_text">Размеры поля не могут быть меньше 20</string>
+
+    <string name="generateRandomButton_text">Бросить кости</string>
+
+    <string name="playerNotificationTV_text">Сейчас ходит игрок</string>
+    <string name="player2StartTV_text">Игрок 2, ваш ход</string>
+
+    <string name="endPlayerProgressButton_text">Переход хода</string>
+    <string name="rotationButton_text">Повернуть</string>
+
+    <string name="exceptionTV_bad_NoRectangle_text">Поставьте прямоугольник(коснитесь экрана)</string>
+    <string name="exceptionTV_good_text">Всё в порядке!</string>
+    <string name="exceptionTV_bad_OutOfBoundsException_text">Не выходите за пределы сетки!</string>
+    <string name="exceptionTV_bad_LocationException_text">Неправильное расположение фигуры!</string>
+
 </resources>

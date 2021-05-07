@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".StartFragment"
+    android:id="@+id/fragment_start_LL">
+
+    <TextView
+        android:id="@+id/programName"
+        style="@style/Widget.MaterialComponents.TextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="50"
+        android:gravity="center"
+        android:text="@string/program_name"
+        android:textColor="@android:color/holo_blue_dark"
+        android:textSize="50sp"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/startButton"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="17"
+        android:gravity="center"
+        android:text="@string/startButton_text"
+        android:textColor="#FF5722" />
+
+    <Button
+        android:id="@+id/regulationsButton"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="16"
+        android:text="@string/regulationButton_text"
+        android:textColor="#FF5722"
+        android:gravity="center"
+        />
+
+    <Button
+        android:id="@+id/settingsButton"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="17"
+        android:text="@string/settingsButton_text"
+        android:textColor="#FF5722"
+        android:gravity="center"
+        />
+
+</LinearLayout>
