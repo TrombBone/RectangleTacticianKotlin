@@ -14,10 +14,10 @@ import kotlin.random.Random
 
 class DiceFragment : Fragment(), View.OnClickListener {
 
-    lateinit var sideWidthTV: TextView
-    lateinit var sideHeightTV: TextView
-    lateinit var generateButton: Button
-    lateinit var mediaPlayer: MediaPlayer
+    private lateinit var sideWidthTV: TextView
+    private lateinit var sideHeightTV: TextView
+    private lateinit var generateButton: Button
+    private lateinit var mediaPlayer: MediaPlayer
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_dice, container, false)
@@ -27,12 +27,13 @@ class DiceFragment : Fragment(), View.OnClickListener {
         generateButton = view.findViewById(R.id.generateSidesButton)
 
         generateButton.setOnClickListener(this)
+
         mediaPlayer = MediaPlayer.create(activity, R.raw.dice)
 
         return view
     }
 
-    override fun onClick(v: View?) {
+    override fun onClick(view: View) {
         mediaPlayer.start()
         generateButton.isEnabled = false
 
@@ -52,15 +53,10 @@ class DiceFragment : Fragment(), View.OnClickListener {
         }
 
         Timer().schedule(2500) {
-            activity!!.supportFragmentManager.beginTransaction().apply {
-                setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
-                replace(R.id.frame_container_main, MainGameFragment())
-                commit()
-            }
             val listener = activity as OnFragmentListener?
             listener?.apply {
-                //onButtonSelected(R.id.generateSidesButton)
                 onParamsSelected(mapOf("rectWidth" to rectWidth, "rectHeight" to rectHeight))
+                onButtonSelected(R.id.generateSidesButton)
             }
         }
     }

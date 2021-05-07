@@ -12,15 +12,17 @@ import androidx.fragment.app.Fragment
 class PlayerStartFragment : Fragment(), View.OnTouchListener {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_player_start, container, false)
-        val playerNumber = arguments?.getInt("playerNumber") ?: 2
-        val tv = view.findViewById<TextView>(R.id.playerNotificationTV).apply {
+
+        val playerNumber = arguments?.getInt("playerNumber") ?: 1
+
+        view.findViewById<TextView>(R.id.playerNotificationTV).apply {
             text = "${getString(R.string.playerNotificationTV_text)} $playerNumber"
 
             setTextColor(when(playerNumber) {
-                1 -> Color.BLUE
-                2 -> Color.RED
-                3 -> Color.GREEN
-                4 -> Color.YELLOW
+                1 -> resources.getColor(R.color.player1, resources.newTheme())
+                2 -> resources.getColor(R.color.player2, resources.newTheme())
+                3 -> resources.getColor(R.color.player3, resources.newTheme())
+                4 -> resources.getColor(R.color.player4, resources.newTheme())
                 else -> Color.BLACK
             })
         }
@@ -31,13 +33,8 @@ class PlayerStartFragment : Fragment(), View.OnTouchListener {
     }
 
     override fun onTouch(v: View?, event: MotionEvent?): Boolean {
-        activity!!.supportFragmentManager.beginTransaction().apply {
-            setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
-            replace(R.id.frame_container_main, DiceFragment())
-            commit()
-        }
-//        val listener = activity as OnFragmentListener?
-//        listener?.onButtonSelected(R.id.playerNotificationTV)
+        val listener = activity as OnFragmentListener?
+        listener?.onButtonSelected(R.id.playerNotificationTV)
         return true
     }
 }

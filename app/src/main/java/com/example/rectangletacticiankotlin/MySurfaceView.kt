@@ -8,8 +8,12 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.SurfaceHolder
 import android.view.SurfaceView
-//import com.example.rectangletacticiankotlin.MainActivity.Companion.fieldHeight
-//import com.example.rectangletacticiankotlin.MainActivity.Companion.fieldWidth
+import com.example.rectangletacticiankotlin.MainGameFragment.Companion.fieldHeight
+import com.example.rectangletacticiankotlin.MainGameFragment.Companion.fieldWidth
+import com.example.rectangletacticiankotlin.MainGameFragment.Companion.playerNumber
+//import com.example.rectangletacticiankotlin.MainGameFragment.Companion.playerCount
+//import com.example.rectangletacticiankotlin.MainGameFragment.Companion.rectWidth
+//import com.example.rectangletacticiankotlin.MainGameFragment.Companion.rectHeight
 
 class MySurfaceView(context: Context?, attrs: AttributeSet?) : SurfaceView(context, attrs), SurfaceHolder.Callback {
     init {
@@ -17,20 +21,16 @@ class MySurfaceView(context: Context?, attrs: AttributeSet?) : SurfaceView(conte
         holder.addCallback(this)
     }
 
-    val mainGameFragment = MainGameFragment()
-    val fieldWidth = mainGameFragment.rectWidth
-    val fieldHeight = mainGameFragment.rectHeight
-
-    var touchX: Float = 0.0f //x-place of touch
-    var touchY: Float = 0.0f //y-place of touch
-    var canvasWidth = 0 //of Canvas
-    var canvasHeight = 0 //of Canvas
-    var cellSize = 0 //cell size
-    var fieldStartX = 0
-    var fieldStartY = 0
-    var fieldEndX = 0
-    var fieldEndY = 0
-    //var draw = false
+    private var touchX: Float = 0.0f //x-place of touch
+    private var touchY: Float = 0.0f //y-place of touch
+    private var canvasWidth = 0 //of Canvas
+    private var canvasHeight = 0 //of Canvas
+    private var cellSize = 0 //cell size
+    private var fieldStartX = 0
+    private var fieldStartY = 0
+    private var fieldEndX = 0
+    private var fieldEndY = 0
+    private var draw = false
 
     fun mainChecker() {
         //
@@ -40,7 +40,13 @@ class MySurfaceView(context: Context?, attrs: AttributeSet?) : SurfaceView(conte
         touchX = event.x
         touchY = event.y
 
-        //check players' rectangles
+        when(playerNumber) {//check players' rectangles
+            1 -> {}
+            2 -> {}
+            3 -> {}
+            4 -> {}
+        }
+
         return true
     }
 

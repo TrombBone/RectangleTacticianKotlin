@@ -13,7 +13,6 @@ class StartFragment : Fragment(), View.OnClickListener {
     private lateinit var regulationsButton: Button
     private lateinit var settingsButton: Button
 
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_start, container, false)
 
@@ -29,23 +28,11 @@ class StartFragment : Fragment(), View.OnClickListener {
     }
 
     override fun onClick(view: View) {
-        //val listener = activity as OnFragmentListener?
+        val listener = activity as OnFragmentListener?
         when(view.id) {
-            R.id.startButton -> {
-                val myDialogFragment = MyDialogFragment()
-                val myManager = activity!!.supportFragmentManager
-                myDialogFragment.show(myManager, "myDialog")
-            }
-            R.id.regulationsButton -> activity!!.supportFragmentManager.beginTransaction().apply {
-                setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
-                replace(R.id.frame_container_start, RegulationsFragment())
-                commit()
-            }
-            R.id.settingsButton -> activity!!.supportFragmentManager.beginTransaction().apply {
-                setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
-                replace(R.id.frame_container_start, SettingsFragment())
-                commit()
-            }
+            R.id.startButton -> listener?.onButtonSelected(R.id.startButton)
+            R.id.regulationsButton -> listener?.onButtonSelected(R.id.regulationsButton)
+            R.id.settingsButton -> listener?.onButtonSelected(R.id.settingsButton)
         }
     }
 }

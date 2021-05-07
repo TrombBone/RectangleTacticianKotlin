@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 
@@ -14,33 +15,37 @@ class MainGameFragment : Fragment(), View.OnClickListener {
     private lateinit var exceptionTV: TextView
     private var isException = false
 
-    var playerCount = 0
-    var fieldWidth = 0
-    var fieldHeight = 0
-    var playerNumber = 0
+    companion object {
+        var playerCount = 0
+        var playerNumber = 0
 
-    //companion object {
+        var fieldWidth = 0
+        var fieldHeight = 0
+
         var rectWidth = 0
         var rectHeight = 0
-    //}
-
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_main_game, container, false)
+        Log.d("my", "arguments_MainGameFragment: $arguments")
 
         playerCount = arguments?.getInt("playerCount") ?: 2
         fieldWidth = arguments?.getInt("fieldWidth") ?: 25
         fieldHeight = arguments?.getInt("fieldHeight") ?: 35
-        playerNumber = arguments?.getInt("playerNumber") ?: 1
+        playerNumber = arguments?.getInt("playerNumber") ?: 0
+        rectWidth = arguments?.getInt("rectWidth") ?: 0
+        rectHeight = arguments?.getInt("rectHeight") ?: 0
 
         exceptionTV = view.findViewById(R.id.exceptionTV)
+        view.findViewById<Button>(R.id.nextTurnButton).setOnClickListener(this)
 
-        Log.d("my", "playerCountMainGameFrag: $playerCount")
-        Log.d("my", "fieldWidthMainGameFrag: $fieldWidth")
-        Log.d("my", "fieldHeightMainGameFrag: $fieldHeight")
-        Log.d("my", "playerNumberMainGameFrag: $playerNumber")
-        Log.d("my", "rectWidthMainGameFrag: $rectWidth")
-        Log.d("my", "rectHeightMainGameFrag: $rectHeight")
+        Log.d("my", "playerCountMainGameFragment: $playerCount")
+        Log.d("my", "fieldWidthMainGameFragment: $fieldWidth")
+        Log.d("my", "fieldHeightMainGameFragment: $fieldHeight")
+        Log.d("my", "playerNumberMainGameFragment: $playerNumber")
+        Log.d("my", "rectWidthMainGameFragment: $rectWidth")
+        Log.d("my", "rectHeightMainGameFragment: $rectHeight")
 
         exceptionTVNoRectangle()
         return view
@@ -70,18 +75,20 @@ class MainGameFragment : Fragment(), View.OnClickListener {
         exceptionTV.text = getString(R.string.exceptionTV_bad_LocationException_text)
     }
 
-    override fun onClick(v: View?) {
-//        when(view.id) {
-//            R.id.rotationButton -> {
-//                fieldWidth += fieldHeight
-//                fieldHeight = fieldWidth - fieldHeight
-//                fieldWidth -= fieldHeight
-//                //check players' rectangle
-//            }
-//            R.id.endPlayerTurnButton -> {
-//                //remember players' coordinates & next turn
-//            }
-//        }
+    override fun onClick(view: View) {
+        val listener = activity as OnFragmentListener?
+        when(view.id) {
+            R.id.rotationButton -> {
+                fieldWidth += fieldHeight
+                fieldHeight = fieldWidth - fieldHeight
+                fieldWidth -= fieldHeight
+                //check player's rectangle again
+            }
+            R.id.nextTurnButton -> {
+                //remember players' coordinates & next turn
+                listener?.onButtonSelected(R.id.nextTurnButton) //next turn
+            }
+        }
     }
 
 }
