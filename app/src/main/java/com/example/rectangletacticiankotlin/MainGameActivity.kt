@@ -2,7 +2,6 @@ package com.example.rectangletacticiankotlin
 
 import android.content.pm.ActivityInfo
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 
 class MainGameActivity : AppCompatActivity(), OnFragmentListener {
@@ -27,9 +26,9 @@ class MainGameActivity : AppCompatActivity(), OnFragmentListener {
         fieldWidth = intent.getIntExtra("fieldWidth", 25)
         fieldHeight = intent.getIntExtra("fieldHeight", 35)
 
-        Log.d("my", "playerCount_MainGameActivity: $playerCount")
-        Log.d("my", "fieldWidth_MainGameActivity: $fieldWidth")
-        Log.d("my", "fieldHeight_MainGameActivity: $fieldHeight")
+//        Log.d("my", "playerCount_MainGameActivity: $playerCount")
+//        Log.d("my", "fieldWidth_MainGameActivity: $fieldWidth")
+//        Log.d("my", "fieldHeight_MainGameActivity: $fieldHeight")
     }
 
     private fun nextTurn() {
@@ -64,7 +63,7 @@ class MainGameActivity : AppCompatActivity(), OnFragmentListener {
                         it.putInt("rectWidth", rectWidth)
                         it.putInt("rectHeight", rectHeight)
                         arguments = it
-                        Log.d("my", "arguments_MainGameActivityForShare: $arguments")
+//                        Log.d("my", "arguments_MainGameActivityForShare: $arguments")
                     }
                     replace(R.id.frame_container_main, this)
                 }
@@ -72,7 +71,7 @@ class MainGameActivity : AppCompatActivity(), OnFragmentListener {
             }
             R.id.nextTurnButton -> {
                 if (playerNumber == playerCount) playerNumber = 1 else playerNumber++
-                Log.d("my", "playerNumber_nextTurn: $playerNumber")
+//                Log.d("my", "playerNumber_nextTurn: $playerNumber")
                 nextTurn()
             }
         }
@@ -81,9 +80,8 @@ class MainGameActivity : AppCompatActivity(), OnFragmentListener {
     override fun onParamsSelected(params: Map<String, String>) {
         rectWidth = params["rectWidth"]?.toInt() ?: 0
         rectHeight = params["rectHeight"]?.toInt() ?: 0
-
-        Log.d("my", "rectWidthFromDiceActivity: $rectWidth")
-        Log.d("my", "rectHeightFromDiceActivity: $rectHeight")
+//        Log.d("my", "rectWidthFromDiceActivity: $rectWidth")
+//        Log.d("my", "rectHeightFromDiceActivity: $rectHeight")
     }
 
     override fun onBackPressed() {

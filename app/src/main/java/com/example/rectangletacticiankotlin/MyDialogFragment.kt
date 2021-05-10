@@ -3,7 +3,6 @@ package com.example.rectangletacticiankotlin
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.DialogFragment
 
 class MyDialogFragment : DialogFragment() {
@@ -16,9 +15,7 @@ class MyDialogFragment : DialogFragment() {
                 .setCancelable(true)
                 .setPositiveButton(R.string.yes) { _, _ ->
                     Intent(activity, MainGameActivity::class.java).also { it ->
-
-                        Log.d("my", "argumentsMyDialogFragment: $arguments")
-
+//                        Log.d("my", "argumentsMyDialogFragment: $arguments")
                         val playerCount = arguments?.getInt("playerCount")
                         val fieldWidth = arguments?.getInt("fieldWidth")
                         val fieldHeight = arguments?.getInt("fieldHeight")

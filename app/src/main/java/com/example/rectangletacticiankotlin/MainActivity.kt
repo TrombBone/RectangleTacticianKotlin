@@ -1,7 +1,6 @@
 package com.example.rectangletacticiankotlin
 
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 
 class MainActivity : AppCompatActivity(), OnFragmentListener {
@@ -27,9 +26,9 @@ class MainActivity : AppCompatActivity(), OnFragmentListener {
             commit()
         }
 
-        Log.d("my", "playerCountMainActivity: $playerCount")
-        Log.d("my", "fieldWidthMainActivity: $fieldWidth")
-        Log.d("my", "fieldHeightMainActivity: $fieldHeight")
+//        Log.d("my", "playerCountMainActivity: $playerCount")
+//        Log.d("my", "fieldWidthMainActivity: $fieldWidth")
+//        Log.d("my", "fieldHeightMainActivity: $fieldHeight")
     }
 
     override fun onButtonSelected(buttonId: Int) {
@@ -41,7 +40,7 @@ class MainActivity : AppCompatActivity(), OnFragmentListener {
                         it.putInt("fieldWidth", fieldWidth)
                         it.putInt("fieldHeight", fieldHeight)
                         arguments = it
-                        Log.d("my", "myDialogFragmentBundle: $it")
+//                        Log.d("my", "myDialogFragmentBundle: $it")
                     }
                     show(supportFragmentManager, "myDialog")
                 }
@@ -65,10 +64,9 @@ class MainActivity : AppCompatActivity(), OnFragmentListener {
         playerCount = if (params["playerCount"] == "true") 4 else 2
         fieldWidth = params["fieldWidth"]?.toInt() ?: 25
         fieldHeight = params["fieldHeight"]?.toInt() ?: 35
-
-        Log.d("my", "playerCountMainActivityFromSettings: $playerCount")
-        Log.d("my", "fieldWidthMainActivityFromSettings: $fieldWidth")
-        Log.d("my", "fieldHeightMainActivityFromSettings: $fieldHeight")
+//        Log.d("my", "playerCountMainActivityFromSettings: $playerCount")
+//        Log.d("my", "fieldWidthMainActivityFromSettings: $fieldWidth")
+//        Log.d("my", "fieldHeightMainActivityFromSettings: $fieldHeight")
     }
 
     override fun onBackPressed() {
