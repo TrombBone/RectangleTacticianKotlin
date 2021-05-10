@@ -10,10 +10,10 @@ import android.view.SurfaceHolder
 import android.view.SurfaceView
 import com.example.rectangletacticiankotlin.MainGameFragment.Companion.fieldHeight
 import com.example.rectangletacticiankotlin.MainGameFragment.Companion.fieldWidth
+import com.example.rectangletacticiankotlin.MainGameFragment.Companion.playerCount
 import com.example.rectangletacticiankotlin.MainGameFragment.Companion.playerNumber
-//import com.example.rectangletacticiankotlin.MainGameFragment.Companion.playerCount
-//import com.example.rectangletacticiankotlin.MainGameFragment.Companion.rectWidth
-//import com.example.rectangletacticiankotlin.MainGameFragment.Companion.rectHeight
+import com.example.rectangletacticiankotlin.MainGameFragment.Companion.rectHeight
+import com.example.rectangletacticiankotlin.MainGameFragment.Companion.rectWidth
 
 class MySurfaceView(context: Context?, attrs: AttributeSet?) : SurfaceView(context, attrs), SurfaceHolder.Callback {
     init {
@@ -21,26 +21,26 @@ class MySurfaceView(context: Context?, attrs: AttributeSet?) : SurfaceView(conte
         holder.addCallback(this)
     }
 
-    private var touchX: Float = 0.0f //x-place of touch
-    private var touchY: Float = 0.0f //y-place of touch
-    private var canvasWidth = 0 //of Canvas
-    private var canvasHeight = 0 //of Canvas
-    private var cellSize = 0 //cell size
-    private var fieldStartX = 0
-    private var fieldStartY = 0
-    private var fieldEndX = 0
-    private var fieldEndY = 0
-    private var draw = false
+    private var touchX = 0f
+    private var touchY = 0f
+    private var canvasWidth = 0
+    private var canvasHeight = 0
+    private var cellSize = 0f
+    private var fieldStartX = 0f
+    private var fieldStartY = 0f
+    private var fieldEndX = 0f
+    private var fieldEndY = 0f
+    private var canDraw = true
 
-    fun mainChecker() {
-        //
-    }
+//    fun mainChecker() {
+//        //
+//    }
 
     override fun onTouchEvent(event: MotionEvent) : Boolean {
         touchX = event.x
         touchY = event.y
 
-        when(playerNumber) {//check players' rectangles
+        when(playerNumber) {// check players' rectangles
             1 -> {}
             2 -> {}
             3 -> {}
@@ -51,32 +51,119 @@ class MySurfaceView(context: Context?, attrs: AttributeSet?) : SurfaceView(conte
     }
 
     inner class DrawThread(private val surfaceHolder: SurfaceHolder) : Thread() {
-        var p = Paint()
+        var isRunning = true
+        private var p = Paint()
 
         override fun run() {
-            val canvas: Canvas = surfaceHolder.lockCanvas(null)
-            p.color = Color.BLACK
-            p.style = Paint.Style.STROKE //контуры
+            while (isRunning) {
+                val canvas: Canvas? = surfaceHolder.lockCanvas(null)
+                p.color = Color.BLACK
+                p.style = Paint.Style.STROKE// контуры
 
-            canvas.drawColor(Color.WHITE)
-            canvasWidth = canvas.width
-            canvasHeight = canvas.height
-            cellSize = canvasWidth / fieldWidth
+                if (canvas != null) {
+                    canvas.drawColor(Color.WHITE)
 
-            //draw mesh
-            for (x in 0..fieldWidth * cellSize step cellSize) canvas.drawLine(x.toFloat(), 0f, x.toFloat(), (fieldHeight*cellSize).toFloat(), p) //vertical lines
-            for (y in 0..fieldHeight * cellSize step cellSize) canvas.drawLine(0f, y.toFloat(), (fieldWidth*cellSize).toFloat(), y.toFloat(), p) //horizontal lines
+                    canvasWidth = canvas.width
+                    canvasHeight = canvas.height
+                    cellSize = (canvasWidth / fieldWidth).toFloat()
 
-            surfaceHolder.unlockCanvasAndPost(canvas)
+                    //draw mesh
+                    for (x in 0..(fieldWidth * cellSize).toInt() step cellSize.toInt())
+                        canvas.drawLine(x.toFloat(), 0f, x.toFloat(), fieldHeight * cellSize, p)// vertical lines
+                    for (y in 0..(fieldHeight * cellSize).toInt() step cellSize.toInt())
+                        canvas.drawLine(0f, y.toFloat(), fieldWidth * cellSize, y.toFloat(), p)// horizontal lines
+
+                    drawStartPlaces(canvas)
+                    drawPlayerRect(canvas)
+                    surfaceHolder.unlockCanvasAndPost(canvas)
+                }
+            }
+        }
+
+        private fun drawStartPlaces(canvas: Canvas) {
+            canvas.apply {
+                val width = fieldWidth * cellSize
+                val height = fieldHeight * cellSize
+                p.style = Paint.Style.FILL
+                p.color = resources.getColor(R.color.player1, resources.newTheme())
+                p.alpha = 95
+                drawRect(0f, 0f, cellSize, cellSize, p)
+                p.color = resources.getColor(R.color.player2, resources.newTheme())
+                p.alpha = 95
+                drawRect(width - cellSize, height - cellSize, width, height, p)
+                if (playerCount == 4) {
+                    p.color = resources.getColor(R.color.player3, resources.newTheme())
+                    p.alpha = 95
+                    drawRect(width - cellSize, 0f, width, cellSize, p)
+                    p.color = resources.getColor(R.color.player4, resources.newTheme())
+                    p.alpha = 95
+                    drawRect(0f, height - cellSize, cellSize, height, p)
+                }
+                p.color = Color.BLACK
+                p.style = Paint.Style.STROKE
+            }
+        }
+
+        private fun drawPlayerRect(canvas: Canvas) {
+            if (canDraw) {
+                p.style = Paint.Style.FILL
+                var tx = touchX
+                var ty = touchY
+                var x = 0f
+                var y = 0f
+                var i = 0
+                var j = 0
+                while (tx > cellSize) {
+                    i++
+                    tx -= cellSize
+                }
+                while (ty > cellSize) {
+                    j++
+                    ty -= cellSize
+                }
+                when(playerNumber) {
+                    1 -> {
+                        p.color = resources.getColor(R.color.player1, resources.newTheme())
+                        x = i * cellSize
+                        y = j * cellSize
+                    }
+                    2 -> {
+                        p.color = resources.getColor(R.color.player2, resources.newTheme())
+                        x = (i - rectWidth + 1) * cellSize
+                        y = (j - rectHeight + 1) * cellSize
+                    }
+                    3 -> {
+                        p.color = resources.getColor(R.color.player3, resources.newTheme())
+                        x = (i - rectWidth + 1) * cellSize
+                        y = j * cellSize
+                    }
+                    4 -> {
+                        p.color = resources.getColor(R.color.player4, resources.newTheme())
+                        x = i * cellSize
+                        y = (j - rectHeight + 1) * cellSize
+                    }
+                }
+                canvas.drawRect(x, y, x + cellSize * rectWidth, y + cellSize * rectHeight, p)
+                p.color = Color.BLACK
+                p.style = Paint.Style.STROKE
+            }
         }
     }
 
+    private lateinit var dt: DrawThread
+
     override fun surfaceCreated(holder: SurfaceHolder) {
-        val dt = DrawThread(holder)
+        dt = DrawThread(holder)
         dt.start()
     }
 
-    override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {}
+    override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
+        dt.isRunning = false
+        dt = DrawThread(holder)
+        dt.start()
+    }
 
-    override fun surfaceDestroyed(holder: SurfaceHolder) {}
+    override fun surfaceDestroyed(holder: SurfaceHolder) {
+        dt.isRunning = false
+    }
 }
