@@ -16,9 +16,9 @@ class MainActivity : AppCompatActivity(), OnFragmentListener {
         supportActionBar?.hide() ?: throw NoSuchElementException("ActionBar is lack")
 
         getPreferences(MODE_PRIVATE).apply {
-            playerCount = if (getString("playerCount", "") == "true") 4 else 2
-            fieldWidth = getString("fieldWidth", "")?.toInt() ?: 25
-            fieldHeight = getString("fieldHeight", "")?.toInt() ?: 35
+            playerCount = if (getString("playerCount", "false") == "true") 4 else 2
+            fieldWidth = getString("fieldWidth", "25")?.toInt() ?: 25
+            fieldHeight = getString("fieldHeight", "35")?.toInt() ?: 35
         }
 
         supportFragmentManager.beginTransaction().apply {
