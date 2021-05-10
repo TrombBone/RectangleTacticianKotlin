@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.SurfaceHolder
@@ -12,40 +13,58 @@ import com.example.rectangletacticiankotlin.MainGameFragment.Companion.fieldHeig
 import com.example.rectangletacticiankotlin.MainGameFragment.Companion.fieldWidth
 import com.example.rectangletacticiankotlin.MainGameFragment.Companion.playerCount
 import com.example.rectangletacticiankotlin.MainGameFragment.Companion.playerNumber
+import com.example.rectangletacticiankotlin.MainGameFragment.Companion.playersRectangles
 import com.example.rectangletacticiankotlin.MainGameFragment.Companion.rectHeight
 import com.example.rectangletacticiankotlin.MainGameFragment.Companion.rectWidth
 
-class MySurfaceView(context: Context?, attrs: AttributeSet?) : SurfaceView(context, attrs), SurfaceHolder.Callback {
+class MySurfaceView(context: Context?, attrs: AttributeSet?) : SurfaceView(context, attrs),
+    SurfaceHolder.Callback {
     init {
         SurfaceView(context, attrs)
         holder.addCallback(this)
     }
 
+    private var canDraw = false
     private var touchX = 0f
     private var touchY = 0f
     private var canvasWidth = 0
     private var canvasHeight = 0
     private var cellSize = 0f
+
+    //for scale:
     private var fieldStartX = 0f
     private var fieldStartY = 0f
     private var fieldEndX = 0f
     private var fieldEndY = 0f
-    private var canDraw = true
 
-//    fun mainChecker() {
-//        //
-//    }
+    lateinit var mainGameFragment: MainGameFragment
 
-    override fun onTouchEvent(event: MotionEvent) : Boolean {
+    companion object {
+        var rectDrawNow = RectF()
+    }
+
+    fun mainChecker() {
+        if (rectDrawNow.isEmpty)
+            mainGameFragment.exceptionTVNoRectangle()
+        else if (rectDrawNow.left < 0 || rectDrawNow.top < 0 || rectDrawNow.right > fieldWidth * cellSize || rectDrawNow.bottom > fieldHeight * cellSize)
+            mainGameFragment.exceptionTVOutOfBounds()
+//        else if() //main check
+//            mainGameFragment.exceptionTVLocation()
+        else mainGameFragment.exceptionTVNoException()
+    }
+
+    override fun onTouchEvent(event: MotionEvent): Boolean {
         touchX = event.x
         touchY = event.y
+        canDraw = true
 
-        when(playerNumber) {// check players' rectangles
-            1 -> {}
-            2 -> {}
-            3 -> {}
-            4 -> {}
-        }
+        //mainChecker()// check players' rectangles
+//        when (playerNumber) {
+//            1 -> {}
+//            2 -> {}
+//            3 -> {}
+//            4 -> {}
+//        }
 
         return true
     }
@@ -58,7 +77,8 @@ class MySurfaceView(context: Context?, attrs: AttributeSet?) : SurfaceView(conte
             while (isRunning) {
                 val canvas: Canvas? = surfaceHolder.lockCanvas(null)
                 p.color = Color.BLACK
-                p.style = Paint.Style.STROKE// контуры
+                p.style = Paint.Style.STROKE// contours
+                p.strokeWidth = 1f
 
                 if (canvas != null) {
                     canvas.drawColor(Color.WHITE)
@@ -67,17 +87,30 @@ class MySurfaceView(context: Context?, attrs: AttributeSet?) : SurfaceView(conte
                     canvasHeight = canvas.height
                     cellSize = (canvasWidth / fieldWidth).toFloat()
 
-                    //draw mesh
-                    for (x in 0..(fieldWidth * cellSize).toInt() step cellSize.toInt())
-                        canvas.drawLine(x.toFloat(), 0f, x.toFloat(), fieldHeight * cellSize, p)// vertical lines
-                    for (y in 0..(fieldHeight * cellSize).toInt() step cellSize.toInt())
-                        canvas.drawLine(0f, y.toFloat(), fieldWidth * cellSize, y.toFloat(), p)// horizontal lines
-
+                    drawMesh(canvas)
                     drawStartPlaces(canvas)
-                    drawPlayerRect(canvas)
+
+                    drawPlayersRectOld(canvas)
+                    drawPlayerRectNow(canvas)
+
+                    mainChecker()
+
                     surfaceHolder.unlockCanvasAndPost(canvas)
                 }
             }
+        }
+
+        private fun drawMesh(canvas: Canvas) {
+            for (x in 0..(fieldWidth * cellSize).toInt() step cellSize.toInt()) canvas.drawLine(
+                x.toFloat(), 0f,
+                x.toFloat(), fieldHeight * cellSize,
+                p
+            )// vertical lines
+            for (y in 0..(fieldHeight * cellSize).toInt() step cellSize.toInt()) canvas.drawLine(
+                0f, y.toFloat(),
+                fieldWidth * cellSize, y.toFloat(),
+                p
+            )// horizontal lines
         }
 
         private fun drawStartPlaces(canvas: Canvas) {
@@ -104,9 +137,8 @@ class MySurfaceView(context: Context?, attrs: AttributeSet?) : SurfaceView(conte
             }
         }
 
-        private fun drawPlayerRect(canvas: Canvas) {
+        private fun drawPlayerRectNow(canvas: Canvas) {
             if (canDraw) {
-                p.style = Paint.Style.FILL
                 var tx = touchX
                 var ty = touchY
                 var x = 0f
@@ -121,7 +153,7 @@ class MySurfaceView(context: Context?, attrs: AttributeSet?) : SurfaceView(conte
                     j++
                     ty -= cellSize
                 }
-                when(playerNumber) {
+                when (playerNumber) {
                     1 -> {
                         p.color = resources.getColor(R.color.player1, resources.newTheme())
                         x = i * cellSize
@@ -143,10 +175,67 @@ class MySurfaceView(context: Context?, attrs: AttributeSet?) : SurfaceView(conte
                         y = (j - rectHeight + 1) * cellSize
                     }
                 }
-                canvas.drawRect(x, y, x + cellSize * rectWidth, y + cellSize * rectHeight, p)
-                p.color = Color.BLACK
+                p.style = Paint.Style.FILL
+                rectDrawNow = RectF(x, y, x + cellSize * rectWidth, y + cellSize * rectHeight)
+                canvas.drawRect(rectDrawNow, p)
+                when (playerNumber) {
+                    1 -> p.color = resources.getColor(R.color.player1_border, resources.newTheme())
+                    2 -> p.color = resources.getColor(R.color.player2_border, resources.newTheme())
+                    3 -> p.color = resources.getColor(R.color.player3_border, resources.newTheme())
+                    4 -> p.color = resources.getColor(R.color.player4_border, resources.newTheme())
+                }
+                p.strokeWidth = 6f
                 p.style = Paint.Style.STROKE
+                canvas.drawRect(
+                    RectF(
+                        x + 4, y + 4,
+                        x + cellSize * rectWidth - 4, y + cellSize * rectHeight - 4
+                    ), p
+                )
+                p.strokeWidth = 1f
+                p.style = Paint.Style.STROKE
+                p.color = Color.BLACK
             }
+        }
+
+        private fun drawPlayersRectOld(canvas: Canvas) {
+            for (player in 1..playerCount) {
+                val list = playersRectangles[player]
+                if (list != null) {
+                    for (i in 0..list.lastIndex) {
+                        val rect = list[i]
+                        when (player) {
+                            1 -> p.color = resources.getColor(R.color.player1, resources.newTheme())
+                            2 -> p.color = resources.getColor(R.color.player2, resources.newTheme())
+                            3 -> p.color = resources.getColor(R.color.player3, resources.newTheme())
+                            4 -> p.color = resources.getColor(R.color.player4, resources.newTheme())
+                        }
+                        p.style = Paint.Style.FILL
+                        canvas.drawRect(rect, p)
+                        when (player) {
+                            1 -> p.color =
+                                resources.getColor(R.color.player1_border, resources.newTheme())
+                            2 -> p.color =
+                                resources.getColor(R.color.player2_border, resources.newTheme())
+                            3 -> p.color =
+                                resources.getColor(R.color.player3_border, resources.newTheme())
+                            4 -> p.color =
+                                resources.getColor(R.color.player4_border, resources.newTheme())
+                        }
+                        p.strokeWidth = 6f
+                        p.style = Paint.Style.STROKE
+                        canvas.drawRect(
+                            RectF(
+                                rect.left + 4, rect.top + 4,
+                                rect.right - 4, rect.bottom - 4
+                            ), p
+                        )
+                    }
+                }
+            }
+            p.strokeWidth = 1f
+            p.style = Paint.Style.STROKE
+            p.color = Color.BLACK
         }
     }
 
