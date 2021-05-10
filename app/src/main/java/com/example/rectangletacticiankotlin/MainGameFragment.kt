@@ -38,6 +38,8 @@ class MainGameFragment : Fragment(), View.OnClickListener {
         rectHeight = arguments?.getInt("rectHeight") ?: 0
 
         exceptionTV = view.findViewById(R.id.exceptionTV)
+
+        view.findViewById<Button>(R.id.rotationButton).setOnClickListener(this)
         view.findViewById<Button>(R.id.nextTurnButton).setOnClickListener(this)
 
         Log.d("my", "playerCountMainGameFragment: $playerCount")
@@ -53,25 +55,25 @@ class MainGameFragment : Fragment(), View.OnClickListener {
 
     fun exceptionTVNoException() {
         isException = true
-        exceptionTV.setBackgroundColor(Color.GREEN)
+        exceptionTV.setBackgroundColor(Color.argb(127, 0, 255, 0))
         exceptionTV.text = getString(R.string.exceptionTV_good_text)
     }
 
     fun exceptionTVNoRectangle() {
         isException = false
-        exceptionTV.setBackgroundColor(Color.BLUE)
+        exceptionTV.setBackgroundColor(Color.argb(127, 0, 0, 255))
         exceptionTV.text = getString(R.string.exceptionTV_bad_NoRectangle_text)
     }
 
     fun exceptionTVOutOfBounds() {
         isException = false
-        exceptionTV.setBackgroundColor(Color.RED)
+        exceptionTV.setBackgroundColor(Color.argb(127, 255, 0, 0))
         exceptionTV.text = getString(R.string.exceptionTV_bad_OutOfBoundsException_text)
     }
 
     fun exceptionTVLocation() {
         isException = false
-        exceptionTV.setBackgroundColor(Color.RED)
+        exceptionTV.setBackgroundColor(Color.argb(127, 255, 0, 0))
         exceptionTV.text = getString(R.string.exceptionTV_bad_LocationException_text)
     }
 
@@ -79,16 +81,15 @@ class MainGameFragment : Fragment(), View.OnClickListener {
         val listener = activity as OnFragmentListener?
         when(view.id) {
             R.id.rotationButton -> {
-                fieldWidth += fieldHeight
-                fieldHeight = fieldWidth - fieldHeight
-                fieldWidth -= fieldHeight
+                rectWidth += rectHeight
+                rectHeight = rectWidth - rectHeight
+                rectWidth -= rectHeight
                 //check player's rectangle again
             }
             R.id.nextTurnButton -> {
                 //remember players' coordinates & next turn
-                listener?.onButtonSelected(R.id.nextTurnButton) //next turn
+                listener?.onButtonSelected(R.id.nextTurnButton)// next turn
             }
         }
     }
-
 }
