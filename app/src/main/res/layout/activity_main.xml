@@ -7,7 +7,7 @@
     android:layout_marginTop="15sp"
     android:layout_marginRight="15sp"
     android:layout_marginBottom="25sp"
-    android:id="@+id/frame_container_start"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    android:id="@+id/frame_container_start">
 
 </FrameLayout>
