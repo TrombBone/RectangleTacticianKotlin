@@ -69,25 +69,25 @@ class MainGameFragment : Fragment(), View.OnClickListener {
     fun exceptionTVNoException() {
         isNotException = true
         exceptionTV.setBackgroundColor(Color.argb(127, 0, 255, 0))
-        exceptionTV.text = getString(R.string.exceptionTV_good_text)
+        exceptionTV.text = activity?.getString(R.string.exceptionTV_good_text)
     }
 
     fun exceptionTVNoRectangle() {
         isNotException = false
         exceptionTV.setBackgroundColor(Color.argb(127, 0, 0, 255))
-        exceptionTV.text = getString(R.string.exceptionTV_bad_NoRectangle_text)
+        exceptionTV.text = activity?.getString(R.string.exceptionTV_bad_NoRectangle_text)
     }
 
     fun exceptionTVOutOfBounds() {
         isNotException = false
         exceptionTV.setBackgroundColor(Color.argb(127, 255, 0, 0))
-        exceptionTV.text = getString(R.string.exceptionTV_bad_OutOfBoundsException_text)
+        exceptionTV.text = activity?.getString(R.string.exceptionTV_bad_OutOfBoundsException_text)
     }
 
     fun exceptionTVLocation() {
         isNotException = false
         exceptionTV.setBackgroundColor(Color.argb(127, 255, 0, 0))
-        exceptionTV.text = getString(R.string.exceptionTV_bad_LocationException_text)
+        exceptionTV.text = activity?.getString(R.string.exceptionTV_bad_LocationException_text)
     }
 
     override fun onClick(view: View) {
