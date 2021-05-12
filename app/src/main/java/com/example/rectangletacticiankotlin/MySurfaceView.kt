@@ -8,7 +8,6 @@ import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.SurfaceHolder
-import android.view.SurfaceView
 import com.example.rectangletacticiankotlin.MainGameFragment.Companion.fieldHeight
 import com.example.rectangletacticiankotlin.MainGameFragment.Companion.fieldWidth
 import com.example.rectangletacticiankotlin.MainGameFragment.Companion.playerCount
@@ -16,11 +15,12 @@ import com.example.rectangletacticiankotlin.MainGameFragment.Companion.playerNum
 import com.example.rectangletacticiankotlin.MainGameFragment.Companion.playersRectangles
 import com.example.rectangletacticiankotlin.MainGameFragment.Companion.rectHeight
 import com.example.rectangletacticiankotlin.MainGameFragment.Companion.rectWidth
+import com.otaliastudios.zoom.ZoomSurfaceView
 
-class MySurfaceView(context: Context?, attrs: AttributeSet?) : SurfaceView(context, attrs),
+class MySurfaceView(context: Context, attrs: AttributeSet?) : ZoomSurfaceView(context, attrs),
     SurfaceHolder.Callback {
     init {
-        SurfaceView(context, attrs)
+        ZoomSurfaceView(context, attrs)
         holder.addCallback(this)
     }
 
@@ -44,8 +44,7 @@ class MySurfaceView(context: Context?, attrs: AttributeSet?) : SurfaceView(conte
     }
 
     fun mainChecker() {
-        if (rectDrawNow.isEmpty)
-            mainGameFragment.exceptionTVNoRectangle()
+        if (rectDrawNow.isEmpty) mainGameFragment.exceptionTVNoRectangle()
         else if (rectDrawNow.left < 0 || rectDrawNow.top < 0 || rectDrawNow.right > fieldWidth * cellSize || rectDrawNow.bottom > fieldHeight * cellSize)
             mainGameFragment.exceptionTVOutOfBounds()
 //        else if() //main check
@@ -53,12 +52,39 @@ class MySurfaceView(context: Context?, attrs: AttributeSet?) : SurfaceView(conte
         else mainGameFragment.exceptionTVNoException()
     }
 
-    override fun onTouchEvent(event: MotionEvent): Boolean {
-        touchX = event.x
-        touchY = event.y
+    override fun onTouchEvent(ev: MotionEvent): Boolean {
+        touchX = ev.x
+        touchY = ev.y
         canDraw = true
 
-        //mainChecker()// check players' rectangles
+//        // событие
+//        val actionMask: Int = ev.actionMasked
+//        // индекс касания
+//        val pointerIndex: Int = ev.actionIndex
+//        // число касаний
+//        val pointerCount: Int = ev.pointerCount
+//
+//        when (actionMask) {
+//            MotionEvent.ACTION_DOWN -> {
+//                //
+//            }
+//            MotionEvent.ACTION_POINTER_DOWN -> {
+//                mainGameFragment.surfaceView.addCallback(object : Callback {
+//                    override fun onZoomSurfaceCreated(view: ZoomSurfaceView) {
+//                        val surface: Surface? = view.surface
+//                        view.engine.zoomTo(2f, true)
+//                        // Use this surface for video players, camera preview, ...
+//                    }
+//
+//                    override fun onZoomSurfaceDestroyed(view: ZoomSurfaceView) {}
+//                })
+//            }
+//            //MotionEvent.ACTION_POINTER_UP -> upPI = pointerIndex
+//            MotionEvent.ACTION_MOVE -> {
+//                //
+//            }
+//        }
+//        mainChecker()// check players' rectangles
 //        when (playerNumber) {
 //            1 -> {}
 //            2 -> {}
@@ -90,8 +116,15 @@ class MySurfaceView(context: Context?, attrs: AttributeSet?) : SurfaceView(conte
                     drawMesh(canvas)
                     drawStartPlaces(canvas)
 
+
                     drawPlayersRectOld(canvas)
                     drawPlayerRectNow(canvas)
+                    if (canDraw) {
+                        this@MySurfaceView.apply {
+                            zoomTo(realZoom + 100, false)
+                        }
+                        //canvas.scale(50f, 50f)
+                    }
 
                     mainChecker()
 
