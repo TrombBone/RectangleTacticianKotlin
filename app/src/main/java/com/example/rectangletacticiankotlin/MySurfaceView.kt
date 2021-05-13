@@ -8,6 +8,7 @@ import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.SurfaceHolder
+import android.view.SurfaceView
 import com.example.rectangletacticiankotlin.MainGameFragment.Companion.fieldHeight
 import com.example.rectangletacticiankotlin.MainGameFragment.Companion.fieldWidth
 import com.example.rectangletacticiankotlin.MainGameFragment.Companion.playerCount
@@ -15,12 +16,11 @@ import com.example.rectangletacticiankotlin.MainGameFragment.Companion.playerNum
 import com.example.rectangletacticiankotlin.MainGameFragment.Companion.playersRectangles
 import com.example.rectangletacticiankotlin.MainGameFragment.Companion.rectHeight
 import com.example.rectangletacticiankotlin.MainGameFragment.Companion.rectWidth
-import com.otaliastudios.zoom.ZoomSurfaceView
 
-class MySurfaceView(context: Context, attrs: AttributeSet?) : ZoomSurfaceView(context, attrs),
+class MySurfaceView(context: Context, attrs: AttributeSet?) : SurfaceView(context, attrs),
     SurfaceHolder.Callback {
     init {
-        ZoomSurfaceView(context, attrs)
+        SurfaceView(context, attrs)
         holder.addCallback(this)
     }
 
@@ -97,7 +97,7 @@ class MySurfaceView(context: Context, attrs: AttributeSet?) : ZoomSurfaceView(co
 
     inner class DrawThread(private val surfaceHolder: SurfaceHolder) : Thread() {
         var isRunning = true
-        private var p = Paint()
+        private val p = Paint()
 
         override fun run() {
             while (isRunning) {
@@ -119,15 +119,14 @@ class MySurfaceView(context: Context, attrs: AttributeSet?) : ZoomSurfaceView(co
 
                     drawPlayersRectOld(canvas)
                     drawPlayerRectNow(canvas)
-                    if (canDraw) {
-                        this@MySurfaceView.apply {
-                            zoomTo(realZoom + 100, false)
-                        }
-                        //canvas.scale(50f, 50f)
-                    }
+//                    if (canDraw) {
+//                        this@MySurfaceView.apply {
+//                            zoomTo(realZoom + 100, false)
+//                        }
+//                        //canvas.scale(50f, 50f)
+//                    }
 
                     mainChecker()
-
                     surfaceHolder.unlockCanvasAndPost(canvas)
                 }
             }
