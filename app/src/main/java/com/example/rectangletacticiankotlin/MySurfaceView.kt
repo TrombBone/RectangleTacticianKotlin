@@ -11,6 +11,7 @@ import com.example.rectangletacticiankotlin.MainGameFragment.Companion.fieldWidt
 import com.example.rectangletacticiankotlin.MainGameFragment.Companion.playerCount
 import com.example.rectangletacticiankotlin.MainGameFragment.Companion.playerNumber
 import com.example.rectangletacticiankotlin.MainGameFragment.Companion.playersRectangles
+import com.example.rectangletacticiankotlin.MainGameFragment.Companion.playersResults
 import com.example.rectangletacticiankotlin.MainGameFragment.Companion.rectHeight
 import com.example.rectangletacticiankotlin.MainGameFragment.Companion.rectWidth
 
@@ -21,6 +22,7 @@ class MySurfaceView(context: Context, attrs: AttributeSet?) : SurfaceView(contex
         holder.addCallback(this)
     }
 
+    private var isEndGame = false
     private var canDraw = false
     private var touchX = 0f
     private var touchY = 0f
@@ -44,6 +46,13 @@ class MySurfaceView(context: Context, attrs: AttributeSet?) : SurfaceView(contex
         touchX = ev.x
         touchY = ev.y
         canDraw = true
+
+        if (isEndGame) {
+            canDraw = false
+            playersResults = dt.totalPlayersArea()
+            val listener = MainGameActivity() as OnFragmentListener?
+            listener?.onButtonSelected(R.id.zoom_Surface_View)// id of this surfaceView
+        }
 /*
         // событие
         val actionMask: Int = ev.actionMasked
@@ -99,9 +108,19 @@ class MySurfaceView(context: Context, attrs: AttributeSet?) : SurfaceView(contex
 
                     drawPlayersRectOld(canvas)
 
-                    if (isFreeSpace()) drawPlayerRectNow(canvas)
+                    if (!isFreeSpace()) {
+                        isEndGame = true
+                        canDraw = false
+                        isRunning = false
+                        sleep(3000)
+                        playersResults = totalPlayersArea()
+                        val listener = MainGameActivity() as OnFragmentListener?
+                        listener?.onButtonSelected(R.id.zoom_Surface_View)// id of this surfaceView
+                    }
 
-                    rectDrawNowLocationChecker()
+                    drawPlayerRectNow(canvas)
+                    rectLocationChecker(rectDrawNow)
+
                     surfaceHolder.unlockCanvasAndPost(canvas)
                 }
             }
@@ -142,6 +161,46 @@ class MySurfaceView(context: Context, attrs: AttributeSet?) : SurfaceView(contex
                 p.color = Color.BLACK
                 p.style = Paint.Style.STROKE
             }
+        }
+
+        private fun drawPlayersRectOld(canvas: Canvas) {
+            for (player in 1..playerCount) {
+                val list = playersRectangles[player]
+                if (list != null) {
+                    for (i in 0..list.lastIndex) {
+                        val rect = list[i]
+                        when (player) {
+                            1 -> p.color = resources.getColor(R.color.player1, resources.newTheme())
+                            2 -> p.color = resources.getColor(R.color.player2, resources.newTheme())
+                            3 -> p.color = resources.getColor(R.color.player3, resources.newTheme())
+                            4 -> p.color = resources.getColor(R.color.player4, resources.newTheme())
+                        }
+                        p.style = Paint.Style.FILL
+                        canvas.drawRect(rect, p)
+                        when (player) {
+                            1 -> p.color =
+                                resources.getColor(R.color.player1_border, resources.newTheme())
+                            2 -> p.color =
+                                resources.getColor(R.color.player2_border, resources.newTheme())
+                            3 -> p.color =
+                                resources.getColor(R.color.player3_border, resources.newTheme())
+                            4 -> p.color =
+                                resources.getColor(R.color.player4_border, resources.newTheme())
+                        }
+                        p.strokeWidth = 6f
+                        p.style = Paint.Style.STROKE
+                        canvas.drawRect(
+                            RectF(
+                                rect.left + 4, rect.top + 4,
+                                rect.right - 4, rect.bottom - 4
+                            ), p
+                        )
+                    }
+                }
+            }
+            p.strokeWidth = 1f
+            p.style = Paint.Style.STROKE
+            p.color = Color.BLACK
         }
 
         private fun drawPlayerRectNow(canvas: Canvas) {
@@ -205,46 +264,6 @@ class MySurfaceView(context: Context, attrs: AttributeSet?) : SurfaceView(contex
             }
         }
 
-        private fun drawPlayersRectOld(canvas: Canvas) {
-            for (player in 1..playerCount) {
-                val list = playersRectangles[player]
-                if (list != null) {
-                    for (i in 0..list.lastIndex) {
-                        val rect = list[i]
-                        when (player) {
-                            1 -> p.color = resources.getColor(R.color.player1, resources.newTheme())
-                            2 -> p.color = resources.getColor(R.color.player2, resources.newTheme())
-                            3 -> p.color = resources.getColor(R.color.player3, resources.newTheme())
-                            4 -> p.color = resources.getColor(R.color.player4, resources.newTheme())
-                        }
-                        p.style = Paint.Style.FILL
-                        canvas.drawRect(rect, p)
-                        when (player) {
-                            1 -> p.color =
-                                resources.getColor(R.color.player1_border, resources.newTheme())
-                            2 -> p.color =
-                                resources.getColor(R.color.player2_border, resources.newTheme())
-                            3 -> p.color =
-                                resources.getColor(R.color.player3_border, resources.newTheme())
-                            4 -> p.color =
-                                resources.getColor(R.color.player4_border, resources.newTheme())
-                        }
-                        p.strokeWidth = 6f
-                        p.style = Paint.Style.STROKE
-                        canvas.drawRect(
-                            RectF(
-                                rect.left + 4, rect.top + 4,
-                                rect.right - 4, rect.bottom - 4
-                            ), p
-                        )
-                    }
-                }
-            }
-            p.strokeWidth = 1f
-            p.style = Paint.Style.STROKE
-            p.color = Color.BLACK
-        }
-
         private fun corners(list: List<RectF>): List<PointF> {// selects all convex and concave corners
             val result = mutableListOf<PointF>()
             for (rect in list) {
@@ -266,54 +285,54 @@ class MySurfaceView(context: Context, attrs: AttributeSet?) : SurfaceView(contex
             return result
         }
 
-        fun rectDrawNowLocationChecker() {
+        private fun rectLocationChecker(rectF: RectF): Boolean {
             mainGameFragment.apply {
-                if (rectDrawNow.isEmpty) exceptionTVNoRectangle()
-                else if (rectDrawNow.left < 0 || rectDrawNow.top < 0 ||
-                    rectDrawNow.right > fieldWidth * cellSize || rectDrawNow.bottom > fieldHeight * cellSize
+                if (rectF.isEmpty) exceptionTVNoRectangle()
+                else if (rectF.left < 0 || rectF.top < 0 ||
+                    rectF.right > fieldWidth * cellSize || rectF.bottom > fieldHeight * cellSize
                 ) exceptionTVOutOfBounds()
                 else if(playersRectangles[playerNumber] == null) {// first rectangle must be in the player's corner
                     when (playerNumber) {
-                        1 -> if (rectDrawNow.left != 0f && rectDrawNow.top != 0f) exceptionTVLocation()
-                        2 -> if (rectDrawNow.right != fieldWidth * cellSize && rectDrawNow.bottom != fieldHeight * cellSize) exceptionTVLocation()
-                        3 -> if (rectDrawNow.right != fieldWidth * cellSize && rectDrawNow.top != 0f) exceptionTVLocation()
-                        4 -> if (rectDrawNow.left != 0f && rectDrawNow.top != fieldHeight * cellSize) exceptionTVLocation()
+                        1 -> if (rectF.left != 0f && rectF.top != 0f) exceptionTVLocation()
+                        2 -> if (rectF.right != fieldWidth * cellSize && rectF.bottom != fieldHeight * cellSize) exceptionTVLocation()
+                        3 -> if (rectF.right != fieldWidth * cellSize && rectF.top != 0f) exceptionTVLocation()
+                        4 -> if (rectF.left != 0f && rectF.top != fieldHeight * cellSize) exceptionTVLocation()
                     }
                 } else {
                     for (i in 1..playerCount)
                         for (oldRect in playersRectangles[i]!!)
-                            if (RectF.intersects(oldRect, rectDrawNow)) {// if intersect, not touch
+                            if (RectF.intersects(oldRect, rectF)) {// if intersect, not touch
                                 exceptionTVLocation()
-                                return
+                                return false
                             }
                     for (oldRect in playersRectangles[playerNumber]!!) {
-                        if (oldRect.left == rectDrawNow.right || oldRect.right == rectDrawNow.left) {
+                        if (oldRect.left == rectF.right || oldRect.right == rectF.left) {
                             val points =
-                                if (oldRect.left == rectDrawNow.right) corners(playersRectangles[playerNumber]!!)
+                                if (oldRect.left == rectF.right) corners(playersRectangles[playerNumber]!!)
                                     .filter { it.x == oldRect.left }// number of points is always even
                                     .sortedBy { it.y }
                                 else corners(playersRectangles[playerNumber]!!)
                                     .filter { it.x == oldRect.right }// number of points is always even
                                     .sortedBy { it.y }
                             for (i in 0..points.lastIndex step 2) {// take every 2 points = continuous line
-                                if ((points[i].y <= rectDrawNow.top && points[i + 1].y >= rectDrawNow.bottom) ||
-                                    (points[i].y >= rectDrawNow.top && points[i + 1].y <= rectDrawNow.bottom)) {
+                                if ((points[i].y <= rectF.top && points[i + 1].y >= rectF.bottom) ||
+                                    (points[i].y >= rectF.top && points[i + 1].y <= rectF.bottom)) {
                                     exceptionTVNoException()
-                                    return
+                                    return true
                                 }
                             }
                         }
-                        if (oldRect.top == rectDrawNow.bottom || oldRect.bottom == rectDrawNow.top) {
-                            val points = if (oldRect.top == rectDrawNow.bottom)
+                        if (oldRect.top == rectF.bottom || oldRect.bottom == rectF.top) {
+                            val points = if (oldRect.top == rectF.bottom)
                                 corners(playersRectangles[playerNumber]!!)
                                     .filter { it.y == oldRect.top }.sortedBy { it.x }
                             else corners(playersRectangles[playerNumber]!!)
                                 .filter { it.y == oldRect.bottom }.sortedBy { it.x }
                             for (i in 0..points.lastIndex step 2) {// take every 2 points = continuous line
-                                if ((points[i].x <= rectDrawNow.left && points[i + 1].x >= rectDrawNow.right) ||
-                                    (points[i].x >= rectDrawNow.left && points[i + 1].x <= rectDrawNow.right)) {
+                                if ((points[i].x <= rectF.left && points[i + 1].x >= rectF.right) ||
+                                    (points[i].x >= rectF.left && points[i + 1].x <= rectF.right)) {
                                     exceptionTVNoException()
-                                    return
+                                    return true
                                 }
                             }
                         }
@@ -321,17 +340,33 @@ class MySurfaceView(context: Context, attrs: AttributeSet?) : SurfaceView(contex
                     exceptionTVLocation()// if there was no "return" in cycles in this "else"
                 }
             }
-        }
-
-        private fun totalPlayersArea(playersRectanglesFun: MutableMap<Int, MutableList<RectF>> = playersRectangles): Int {
-            //
-            return 0
+            return false// after the first three "if", else never
         }
 
         private fun isFreeSpace(): Boolean {
-            //if there is free space - draw
-            //else - wait a couple of seconds, count the area of all players and display the results
-            return true
+            for (x in 0..fieldWidth - minOf(rectWidth, rectHeight)) {
+                for (y in 0..fieldHeight - minOf(rectWidth, rectHeight)) {
+                    if (rectLocationChecker(RectF(
+                            x.toFloat(), y.toFloat(),
+                            (x + rectWidth).toFloat(), (y + rectHeight).toFloat()
+                        )) || rectLocationChecker(RectF(
+                            x.toFloat(), y.toFloat(),
+                            (x + rectHeight).toFloat(), (y + rectWidth).toFloat()
+                        ))
+                    ) {
+                        return true
+                    }
+                }
+            }
+            return false// if there was no "return" in cycle
+        }
+
+        fun totalPlayersArea(): Map<Int, Int> {
+            val playersArea = mutableMapOf(1 to 0, 2 to 0, 3 to 0, 4 to 0)
+            for (player in 1..playerCount)
+                for (rect in playersRectangles[player]!!) playersArea[player] =
+                    playersArea[player]!! + ((rect.bottom - rect.top) / cellSize * ((rect.right - rect.left) / cellSize)).toInt()
+            return playersArea
         }
     }
 
