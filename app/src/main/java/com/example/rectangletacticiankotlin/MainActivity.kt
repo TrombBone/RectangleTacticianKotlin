@@ -34,7 +34,7 @@ class MainActivity : AppCompatActivity(), OnFragmentListener {
     override fun onButtonSelected(buttonId: Int) {
         when (buttonId) {
             R.id.startButton -> {
-                MyDialogFragment().apply {
+                ConfirmStartDialogFragment().apply {
                     Bundle().also {
                         it.putInt("playerCount", playerCount)
                         it.putInt("fieldWidth", fieldWidth)
@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity(), OnFragmentListener {
                         arguments = it
 //                        Log.d("my", "myDialogFragmentBundle: $it")
                     }
-                    show(supportFragmentManager, "myDialog")
+                    show(supportFragmentManager, "confirmStartDialog")
                 }
             }
             R.id.regulationsButton -> supportFragmentManager.beginTransaction().apply {

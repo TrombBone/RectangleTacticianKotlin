@@ -5,7 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.DialogFragment
 
-class MyDialogFragment : DialogFragment() {
+class ConfirmStartDialogFragment : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): AlertDialog {
         return activity?.let {
@@ -33,4 +33,5 @@ class MyDialogFragment : DialogFragment() {
             builder.create()
         } ?: throw IllegalStateException("Activity cannot be null")
     }
+
 }
