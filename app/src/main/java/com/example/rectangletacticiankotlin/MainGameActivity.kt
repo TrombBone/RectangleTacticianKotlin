@@ -3,6 +3,7 @@ package com.example.rectangletacticiankotlin
 import android.content.pm.ActivityInfo
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.example.rectangletacticiankotlin.MainGameFragment.Companion.playersResults
 
 class MainGameActivity : AppCompatActivity(), OnFragmentListener {
 
@@ -73,6 +74,20 @@ class MainGameActivity : AppCompatActivity(), OnFragmentListener {
                 if (playerNumber == playerCount) playerNumber = 1 else playerNumber++
 //                Log.d("my", "playerNumber_nextTurn: $playerNumber")
                 nextTurn()
+            }
+            R.id.zoom_Surface_View -> {
+                FinishDialogFragment().apply {
+                    Bundle().also {
+                        it.putInt("player1", playersResults[1]!!)
+                        it.putInt("player2", playersResults[2]!!)
+                        if (playerCount == 4) {
+                            it.putInt("player3", playersResults[3]!!)
+                            it.putInt("player4", playersResults[4]!!)
+                        }
+                        arguments = it
+                    }
+                    show(supportFragmentManager, "finishDialog")
+                }
             }
         }
     }

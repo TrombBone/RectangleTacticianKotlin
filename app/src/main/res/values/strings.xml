@@ -50,4 +50,9 @@
     <string name="exceptionTV_bad_OutOfBoundsException_text">Не выходите за пределы сетки!</string>
     <string name="exceptionTV_bad_LocationException_text">Неправильное расположение фигуры!</string>
 
+    <string name="gameOver">Игра окончена</string>
+    <string name="finishDialog_text">На поле закончилось свободное место. Вот ваши результаты: </string>
+    <string name="showField_text">Посмотреть на поле</string>
+    <string name="endGame_text">Закончить</string>
+
 </resources>
