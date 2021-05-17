@@ -1,10 +1,7 @@
 package com.example.rectangletacticiankotlin
 
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.RectF
+import android.graphics.*
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.SurfaceHolder
@@ -32,10 +29,10 @@ class MySurfaceView(context: Context, attrs: AttributeSet?) : SurfaceView(contex
     private var cellSize = 0f
 
     //for scale:
-    private var fieldStartX = 0f
-    private var fieldStartY = 0f
-    private var fieldEndX = 0f
-    private var fieldEndY = 0f
+//    private var fieldStartX = 0f
+//    private var fieldStartY = 0f
+//    private var fieldEndX = 0f
+//    private var fieldEndY = 0f
 
     lateinit var mainGameFragment: MainGameFragment
 
@@ -43,55 +40,39 @@ class MySurfaceView(context: Context, attrs: AttributeSet?) : SurfaceView(contex
         var rectDrawNow = RectF()
     }
 
-    fun mainChecker() {
-        if (rectDrawNow.isEmpty) mainGameFragment.exceptionTVNoRectangle()
-        else if (rectDrawNow.left < 0 || rectDrawNow.top < 0 || rectDrawNow.right > fieldWidth * cellSize || rectDrawNow.bottom > fieldHeight * cellSize)
-            mainGameFragment.exceptionTVOutOfBounds()
-//        else if() //main check
-//            mainGameFragment.exceptionTVLocation()
-        else mainGameFragment.exceptionTVNoException()
-    }
-
     override fun onTouchEvent(ev: MotionEvent): Boolean {
         touchX = ev.x
         touchY = ev.y
         canDraw = true
+/*
+        // событие
+        val actionMask: Int = ev.actionMasked
+        // индекс касания
+        val pointerIndex: Int = ev.actionIndex
+        // число касаний
+        val pointerCount: Int = ev.pointerCount
 
-//        // событие
-//        val actionMask: Int = ev.actionMasked
-//        // индекс касания
-//        val pointerIndex: Int = ev.actionIndex
-//        // число касаний
-//        val pointerCount: Int = ev.pointerCount
-//
-//        when (actionMask) {
-//            MotionEvent.ACTION_DOWN -> {
-//                //
-//            }
-//            MotionEvent.ACTION_POINTER_DOWN -> {
-//                mainGameFragment.surfaceView.addCallback(object : Callback {
-//                    override fun onZoomSurfaceCreated(view: ZoomSurfaceView) {
-//                        val surface: Surface? = view.surface
-//                        view.engine.zoomTo(2f, true)
-//                        // Use this surface for video players, camera preview, ...
-//                    }
-//
-//                    override fun onZoomSurfaceDestroyed(view: ZoomSurfaceView) {}
-//                })
-//            }
-//            //MotionEvent.ACTION_POINTER_UP -> upPI = pointerIndex
-//            MotionEvent.ACTION_MOVE -> {
-//                //
-//            }
-//        }
-//        mainChecker()// check players' rectangles
-//        when (playerNumber) {
-//            1 -> {}
-//            2 -> {}
-//            3 -> {}
-//            4 -> {}
-//        }
+        when (actionMask) {
+            MotionEvent.ACTION_DOWN -> {
+                //
+            }
+            MotionEvent.ACTION_POINTER_DOWN -> {
+                mainGameFragment.surfaceView.addCallback(object : Callback {
+                    override fun onZoomSurfaceCreated(view: ZoomSurfaceView) {
+                        val surface: Surface? = view.surface
+                        view.engine.zoomTo(2f, true)
+                        // Use this surface for video players, camera preview, ...
+                    }
 
+                    override fun onZoomSurfaceDestroyed(view: ZoomSurfaceView) {}
+                })
+            }
+            //MotionEvent.ACTION_POINTER_UP -> upPI = pointerIndex
+            MotionEvent.ACTION_MOVE -> {
+                //
+            }
+        }
+ */
         return true
     }
 
@@ -116,17 +97,11 @@ class MySurfaceView(context: Context, attrs: AttributeSet?) : SurfaceView(contex
                     drawMesh(canvas)
                     drawStartPlaces(canvas)
 
-
                     drawPlayersRectOld(canvas)
-                    drawPlayerRectNow(canvas)
-//                    if (canDraw) {
-//                        this@MySurfaceView.apply {
-//                            zoomTo(realZoom + 100, false)
-//                        }
-//                        //canvas.scale(50f, 50f)
-//                    }
 
-                    mainChecker()
+                    if (isFreeSpace()) drawPlayerRectNow(canvas)
+
+                    rectDrawNowLocationChecker()
                     surfaceHolder.unlockCanvasAndPost(canvas)
                 }
             }
@@ -268,6 +243,95 @@ class MySurfaceView(context: Context, attrs: AttributeSet?) : SurfaceView(contex
             p.strokeWidth = 1f
             p.style = Paint.Style.STROKE
             p.color = Color.BLACK
+        }
+
+        private fun corners(list: List<RectF>): List<PointF> {// selects all convex and concave corners
+            val result = mutableListOf<PointF>()
+            for (rect in list) {
+                val pointsRect = listOf(
+                    PointF(rect.left, rect.top),
+                    PointF(rect.right, rect.top),
+                    PointF(rect.right, rect.bottom),
+                    PointF(rect.left, rect.bottom)
+                )
+                for (rectPoint in pointsRect)
+                    if (rectPoint != PointF(0f, 0f) &&
+                        rectPoint != PointF(cellSize * fieldWidth, 0f) &&
+                        rectPoint != PointF(cellSize * fieldWidth, cellSize * fieldHeight) &&
+                        rectPoint != PointF(0f, cellSize * fieldHeight)
+                        && !result.contains(rectPoint)
+                    ) result.add(rectPoint)
+                    else if (result.contains(rectPoint)) result.remove(rectPoint)
+            }
+            return result
+        }
+
+        fun rectDrawNowLocationChecker() {
+            mainGameFragment.apply {
+                if (rectDrawNow.isEmpty) exceptionTVNoRectangle()
+                else if (rectDrawNow.left < 0 || rectDrawNow.top < 0 ||
+                    rectDrawNow.right > fieldWidth * cellSize || rectDrawNow.bottom > fieldHeight * cellSize
+                ) exceptionTVOutOfBounds()
+                else if(playersRectangles[playerNumber] == null) {// first rectangle must be in the player's corner
+                    when (playerNumber) {
+                        1 -> if (rectDrawNow.left != 0f && rectDrawNow.top != 0f) exceptionTVLocation()
+                        2 -> if (rectDrawNow.right != fieldWidth * cellSize && rectDrawNow.bottom != fieldHeight * cellSize) exceptionTVLocation()
+                        3 -> if (rectDrawNow.right != fieldWidth * cellSize && rectDrawNow.top != 0f) exceptionTVLocation()
+                        4 -> if (rectDrawNow.left != 0f && rectDrawNow.top != fieldHeight * cellSize) exceptionTVLocation()
+                    }
+                } else {
+                    for (i in 1..playerCount)
+                        for (oldRect in playersRectangles[i]!!)
+                            if (RectF.intersects(oldRect, rectDrawNow)) {// if intersect, not touch
+                                exceptionTVLocation()
+                                return
+                            }
+                    for (oldRect in playersRectangles[playerNumber]!!) {
+                        if (oldRect.left == rectDrawNow.right || oldRect.right == rectDrawNow.left) {
+                            val points =
+                                if (oldRect.left == rectDrawNow.right) corners(playersRectangles[playerNumber]!!)
+                                    .filter { it.x == oldRect.left }// number of points is always even
+                                    .sortedBy { it.y }
+                                else corners(playersRectangles[playerNumber]!!)
+                                    .filter { it.x == oldRect.right }// number of points is always even
+                                    .sortedBy { it.y }
+                            for (i in 0..points.lastIndex step 2) {// take every 2 points = continuous line
+                                if ((points[i].y <= rectDrawNow.top && points[i + 1].y >= rectDrawNow.bottom) ||
+                                    (points[i].y >= rectDrawNow.top && points[i + 1].y <= rectDrawNow.bottom)) {
+                                    exceptionTVNoException()
+                                    return
+                                }
+                            }
+                        }
+                        if (oldRect.top == rectDrawNow.bottom || oldRect.bottom == rectDrawNow.top) {
+                            val points = if (oldRect.top == rectDrawNow.bottom)
+                                corners(playersRectangles[playerNumber]!!)
+                                    .filter { it.y == oldRect.top }.sortedBy { it.x }
+                            else corners(playersRectangles[playerNumber]!!)
+                                .filter { it.y == oldRect.bottom }.sortedBy { it.x }
+                            for (i in 0..points.lastIndex step 2) {// take every 2 points = continuous line
+                                if ((points[i].x <= rectDrawNow.left && points[i + 1].x >= rectDrawNow.right) ||
+                                    (points[i].x >= rectDrawNow.left && points[i + 1].x <= rectDrawNow.right)) {
+                                    exceptionTVNoException()
+                                    return
+                                }
+                            }
+                        }
+                    }
+                    exceptionTVLocation()// if there was no "return" in cycles in this "else"
+                }
+            }
+        }
+
+        private fun totalPlayersArea(playersRectanglesFun: MutableMap<Int, MutableList<RectF>> = playersRectangles): Int {
+            //
+            return 0
+        }
+
+        private fun isFreeSpace(): Boolean {
+            //if there is free space - draw
+            //else - wait a couple of seconds, count the area of all players and display the results
+            return true
         }
     }
 
