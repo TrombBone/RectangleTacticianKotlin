@@ -1,5 +1,6 @@
 package com.example.rectangletacticiankotlin
 
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 
@@ -13,6 +14,7 @@ class MainActivity : AppCompatActivity(), OnFragmentListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         supportActionBar?.hide() ?: throw NoSuchElementException("ActionBar is lack")
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
         getPreferences(MODE_PRIVATE).apply {
             playerCount = if (getString("playerCount", "false") == "true") 4 else 2
