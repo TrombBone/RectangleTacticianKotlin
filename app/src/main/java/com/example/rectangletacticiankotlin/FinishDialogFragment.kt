@@ -11,27 +11,42 @@ import kotlin.concurrent.schedule
 class FinishDialogFragment : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        return activity?.let {
+        val myActivity = activity ?: throw IllegalStateException("Activity cannot be null")
+        return myActivity.let {
             val builder = AlertDialog.Builder(it)
             builder.setTitle(R.string.gameOver)
-                .setMessage("${R.string.finishDialog_text} \n" +
-                        "${arguments?.getInt("player1")} \n " +
-                        "${arguments?.getInt("player2")} \n" +
-                        "${arguments?.getInt("player3")} \n" +
-                        "${arguments?.getInt("player4")}")
+                .setMessage("${activity?.getString(R.string.finishDialog_text)}\n" +
+                        "Игрок 1: ${arguments?.getInt("player1")}\n" +
+                        "Игрок 2: ${arguments?.getInt("player2")}\n" +
+                        "Игрок 3: ${arguments?.getInt("player3")}\n" +
+                        "Игрок 4: ${arguments?.getInt("player4")}"
+                )
                 .setCancelable(true)
                 .setPositiveButton(R.string.endGame_text) { _, _ ->
-                    Intent(activity, MainActivity::class.java).also { it ->
+                    val fm = myActivity.supportFragmentManager
+                    for (i in fm.fragments) {
+                        fm.beginTransaction().remove(i)
+                    }
+                    Intent(myActivity, MainActivity::class.java).also{ it ->
+                        //it.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                         startActivity(it)
                     }
-                    activity?.finish() ?: throw IllegalStateException("Activity cannot be null")
+                    myActivity.finish()
+                    //myActivity.finishAffinity()
+                    MainGameFragment.clean()
                 }
                 .setNegativeButton(R.string.showField_text) { _, _ ->
-                    dialog?.dismiss() ?: throw IllegalStateException("Dialog cannot be null")
-                    if (!(dialog?.isShowing
-                            ?: throw IllegalStateException("Dialog cannot be null"))
-                    ) Timer().schedule(8000L) {
-                        dialog?.show() ?: throw IllegalStateException("Dialog cannot be null")
+                    val myDialog = dialog ?: throw IllegalStateException("Dialog cannot be null")
+                    myDialog.hide()
+                    if (!myDialog.isShowing) {
+                        //Log.d("my", "I'm wait!!!")
+                        Timer().schedule(7000L) {
+                            //Log.d("my", "I'm try!!!")
+                            myActivity.runOnUiThread {
+                                //Log.d("my", "I'm try2!!!")
+                                show(myActivity.supportFragmentManager, "finishDialog")
+                            }
+                        }
                     }
                 }
             builder.create()
