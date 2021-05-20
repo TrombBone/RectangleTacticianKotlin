@@ -53,6 +53,7 @@ class DiceFragment : Fragment(), View.OnClickListener {
         }
 
         Timer().schedule(2500) {
+            mediaPlayer.stop()
             val listener = activity as OnFragmentListener?
             listener?.apply {
                 onParamsSelected(mapOf("rectWidth" to rectWidth, "rectHeight" to rectHeight))
