@@ -1,15 +1,19 @@
 package com.example.rectangletacticiankotlin
 
-import android.graphics.*
+import android.graphics.Color
+import android.graphics.RectF
 import android.os.Bundle
 import android.util.Log
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import com.example.rectangletacticiankotlin.MySurfaceView.Companion.isEndGame
+import com.example.rectangletacticiankotlin.MySurfaceView.Companion.isRunning
 import com.example.rectangletacticiankotlin.MySurfaceView.Companion.rectDrawNow
-import com.otaliastudios.zoom.ZoomSurfaceView
 
 
 class MainGameFragment : Fragment(), View.OnClickListener {
@@ -30,13 +34,25 @@ class MainGameFragment : Fragment(), View.OnClickListener {
         var rectWidth = 0
         var rectHeight = 0
 
-        val playersRectangles = mutableMapOf<Int, MutableList<RectF>>()
+        var playersRectangles = mutableMapOf<Int, MutableList<RectF>>()
         var playersResults = mapOf<Int, Int>()
+
+        fun clean() {
+            playerCount = 0
+            playerNumber = 0
+
+            fieldWidth = 0
+            fieldHeight = 0
+
+            rectWidth = 0
+            rectHeight = 0
+
+            playersRectangles = mutableMapOf<Int, MutableList<RectF>>()
+            playersResults = mapOf<Int, Int>()
+        }
     }
 
-
-
-//    lateinit var surfaceView: MySurfaceView
+    lateinit var mySurfaceView: MySurfaceView
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_main_game, container, false)
@@ -56,82 +72,83 @@ class MainGameFragment : Fragment(), View.OnClickListener {
         rotationButton.setOnClickListener(this)
 
         //-------------------------------
-//        surfaceView = view.findViewById(R.id.mySurfaceView)
-//        surfaceView.mainGameFragment = this
+        mySurfaceView = view.findViewById(R.id.mySurfaceView)
+        mySurfaceView.mainGameFragment = this
         //-------------------------------
 
-        val surfaceView: ZoomSurfaceView = view.findViewById(R.id.zoom_Surface_View)
-        surfaceView.setContentSize(linearLayout.width.toFloat(), linearLayout.height.toFloat())
-        surfaceView.addCallback(object : ZoomSurfaceView.Callback {
-
-            lateinit var drawThread: DrawThread
-            override fun onZoomSurfaceCreated(view: ZoomSurfaceView) {
-                val surface: Surface? = view.surface
-                //view.setContentSize(surfaceView.width.toFloat(), surfaceView.height.toFloat())
-                //view.realZoomTo(view.realZoom / 100, true)
-                drawThread = DrawThread(surface)
-                drawThread.start()
-            }
-
-            override fun onZoomSurfaceDestroyed(view: ZoomSurfaceView) {
-                drawThread.isRunning = false
-            }
-
-            val a = view.setOnTouchListener { _, event ->
-                touchX = event.x
-                touchY = event.y
-                return@setOnTouchListener false
-            }
-
-            var cellSize = 0f
-            var canDraw = true
-            var touchX = 0f
-            var touchY = 0f
-
-            inner class DrawThread(private val surface: Surface?) : Thread() {
-                var isRunning = true
-                private val p = Paint()
-
-                override fun run() {
-//                    var canvas: Canvas? = surface?.lockCanvas(null)
+//        val surfaceView: ZoomSurfaceView = view.findViewById(R.id.zoom_Surface_View)
+//        surfaceView.setContentSize(linearLayout.width.toFloat(), linearLayout.height.toFloat())
 //
-////                    val bitmap = Bitmap.createBitmap(linearLayout.width, linearLayout.height, Bitmap.Config.ARGB_8888)
-////                    canvas?.setBitmap(bitmap)
-//                    surface?.unlockCanvasAndPost(canvas)
-                    while (isRunning) {
-                        val canvas = surface?.lockCanvas(null)
-                        p.color = Color.BLACK
-                        p.style = Paint.Style.STROKE// contours
-                        p.strokeWidth = 0.1f
-
-                        if (canvas != null) {
-                            canvas.drawColor(Color.WHITE)
-
-                            val canvasWidth = canvas.width
-                            val canvasHeight = canvas.height
-                            //Log.d("my", "canvasWidth: $canvasWidth")
-                            Log.d("my", "canvasWidth: ${canvas.width}, canvasHeight: ${canvas.height}")
-
-//                            cellSize = canvasWidth.toFloat() / fieldWidth
-//                            Log.d("my", "cellSize: $cellSize")
-
-                            canvas.drawLine(0f, 0f, 0.5f, 0.5f, p)
-//                            drawMesh(canvas)
-//                            drawStartPlaces(canvas)
+//        surfaceView.addCallback(object : ZoomSurfaceView.Callback {
 //
-//                            drawPlayersRectOld(canvas)
-//                            drawPlayerRectNow(canvas)
-
-                            //mainChecker()
-                            surface?.unlockCanvasAndPost(canvas)
-                            sleep(1000)
-                        }
-                    }
-                }
-                //my methods
-            }
-
-        })
+//            lateinit var drawThread: DrawThread
+//            override fun onZoomSurfaceCreated(view: ZoomSurfaceView) {
+//                val surface: Surface? = view.surface
+//                //view.setContentSize(surfaceView.width.toFloat(), surfaceView.height.toFloat())
+//                //view.realZoomTo(view.realZoom / 100, true)
+//                drawThread = DrawThread(surface)
+//                drawThread.start()
+//            }
+//
+//            override fun onZoomSurfaceDestroyed(view: ZoomSurfaceView) {
+//                drawThread.isRunning = false
+//            }
+//
+//            val a = view.setOnTouchListener { _, event ->
+//                touchX = event.x
+//                touchY = event.y
+//                return@setOnTouchListener false
+//            }
+//
+//            var cellSize = 0f
+//            var canDraw = true
+//            var touchX = 0f
+//            var touchY = 0f
+//
+//            inner class DrawThread(private val surface: Surface?) : Thread() {
+//                var isRunning = true
+//                private val p = Paint()
+//
+//                override fun run() {
+////                    var canvas: Canvas? = surface?.lockCanvas(null)
+////
+//////                    val bitmap = Bitmap.createBitmap(linearLayout.width, linearLayout.height, Bitmap.Config.ARGB_8888)
+//////                    canvas?.setBitmap(bitmap)
+////                    surface?.unlockCanvasAndPost(canvas)
+//                    while (isRunning) {
+//                        val canvas = surface?.lockCanvas(null)
+//                        p.color = Color.BLACK
+//                        p.style = Paint.Style.STROKE// contours
+//                        p.strokeWidth = 0.1f
+//
+//                        if (canvas != null) {
+//                            canvas.drawColor(Color.WHITE)
+//
+//                            val canvasWidth = canvas.width
+//                            val canvasHeight = canvas.height
+//                            //Log.d("my", "canvasWidth: $canvasWidth")
+//                            Log.d("my", "canvasWidth: ${canvas.width}, canvasHeight: ${canvas.height}")
+//
+////                            cellSize = canvasWidth.toFloat() / fieldWidth
+////                            Log.d("my", "cellSize: $cellSize")
+//
+//                            canvas.drawLine(0f, 0f, 0.5f, 0.5f, p)
+////                            drawMesh(canvas)
+////                            drawStartPlaces(canvas)
+////
+////                            drawPlayersRectOld(canvas)
+////                            drawPlayerRectNow(canvas)
+//
+//                            //mainChecker()
+//                            surface?.unlockCanvasAndPost(canvas)
+//                            sleep(1000)
+//                        }
+//                    }
+//                }
+//                //my methods
+//            }
+//
+//        })
 
         view.findViewById<Button>(R.id.nextTurnButton).setOnClickListener(this)
 
@@ -149,25 +166,37 @@ class MainGameFragment : Fragment(), View.OnClickListener {
     fun exceptionTVNoException() {
         isNotException = true
         exceptionTV.setBackgroundColor(Color.argb(127, 0, 255, 0))
-        exceptionTV.text = activity?.getString(R.string.exceptionTV_good_text)
+        exceptionTV.text = getString(R.string.exceptionTV_good_text)
     }
 
     fun exceptionTVNoRectangle() {
         isNotException = false
         exceptionTV.setBackgroundColor(Color.argb(127, 0, 0, 255))
-        exceptionTV.text = activity?.getString(R.string.exceptionTV_bad_NoRectangle_text)
+        exceptionTV.text = getString(R.string.exceptionTV_bad_NoRectangle_text)
     }
 
     fun exceptionTVOutOfBounds() {
         isNotException = false
         exceptionTV.setBackgroundColor(Color.argb(127, 255, 0, 0))
-        exceptionTV.text = activity?.getString(R.string.exceptionTV_bad_OutOfBoundsException_text)
+        exceptionTV.text = getString(R.string.exceptionTV_bad_OutOfBoundsException_text)
     }
 
     fun exceptionTVLocation() {
         isNotException = false
         exceptionTV.setBackgroundColor(Color.argb(127, 255, 0, 0))
-        exceptionTV.text = activity?.getString(R.string.exceptionTV_bad_LocationException_text)
+        exceptionTV.text = getString(R.string.exceptionTV_bad_LocationException_text)
+    }
+
+    fun exceptionTVLocationFirstRect() {
+        isNotException = false
+        exceptionTV.setBackgroundColor(Color.argb(127, 255, 0, 0))
+        exceptionTV.text = getString(R.string.exceptionTV_bad_LocationException_firstRect_text)
+    }
+
+    fun exceptionTVNotFreeSpace() {
+        isNotException = true
+        exceptionTV.setBackgroundColor(Color.argb(127, 127, 0, 255))
+        exceptionTV.text = getString(R.string.exceptionTV_neutral_NotFreeSpaceException_text)
     }
 
     override fun onClick(view: View) {
@@ -177,14 +206,27 @@ class MainGameFragment : Fragment(), View.OnClickListener {
                 rectWidth += rectHeight
                 rectHeight = rectWidth - rectHeight
                 rectWidth -= rectHeight
-                //check player's rectangle again
+                mySurfaceView.rectLocationChecker(
+                    RectF(
+                        rectDrawNow.left,
+                        rectDrawNow.top,
+                        rectDrawNow.left + rectDrawNow.height(),
+                        rectDrawNow.top + rectDrawNow.width()
+                    ),
+                    true
+                )//check player's rectangle again
             }
             R.id.nextTurnButton -> {
                 if (isNotException) {
                     playersRectangles.getOrPut(playerNumber, { mutableListOf() }).add(rectDrawNow)
                     rotationButton.isEnabled = isNotException
+                    isRunning = false
+                    if (isEndGame) MainGameActivity().isEndGame = true
+                    if (MainGameActivity().isEndGame && playerNumber == playerCount) {
+                        playersResults = mySurfaceView.totalPlayersArea()
+                        listener?.onButtonSelected(R.id.mySurfaceView)// id of this surfaceView
+                    } else listener?.onButtonSelected(R.id.nextTurnButton)// next turn
 //                Log.d("my", "playersRectangles: $playersRectangles")
-                    listener?.onButtonSelected(R.id.nextTurnButton)// next turn
                 }
             }
         }
