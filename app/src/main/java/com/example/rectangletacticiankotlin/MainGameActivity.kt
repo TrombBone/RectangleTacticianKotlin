@@ -15,6 +15,8 @@ class MainGameActivity : AppCompatActivity(), OnFragmentListener {
     private var rectWidth = 0
     private var rectHeight = 0
 
+    var isEndGame = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main_game)
@@ -75,7 +77,7 @@ class MainGameActivity : AppCompatActivity(), OnFragmentListener {
 //                Log.d("my", "playerNumber_nextTurn: $playerNumber")
                 nextTurn()
             }
-            R.id.zoom_Surface_View -> {
+            R.id.mySurfaceView -> {
                 FinishDialogFragment().apply {
                     Bundle().also {
                         it.putInt("player1", playersResults[1]!!)
