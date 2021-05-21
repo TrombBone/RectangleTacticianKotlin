@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.Fragment
 
-class StartFragment(private val listener: OnFragmentListener?) : Fragment(), View.OnClickListener {
+class StartFragment(private val listener: OnFragmentListener) : Fragment(), View.OnClickListener {
 
     private lateinit var startGameButton: Button
     private lateinit var regulationsButton: Button
@@ -32,9 +32,9 @@ class StartFragment(private val listener: OnFragmentListener?) : Fragment(), Vie
     override fun onClick(view: View) {
 
         when(view.id) {
-            R.id.startButton -> listener?.onButtonSelected(R.id.startButton)
-            R.id.regulationsButton -> listener?.onButtonSelected(R.id.regulationsButton)
-            R.id.settingsButton -> listener?.onButtonSelected(R.id.settingsButton)
+            R.id.startButton -> listener.onButtonSelected(R.id.startButton)
+            R.id.regulationsButton -> listener.onButtonSelected(R.id.regulationsButton)
+            R.id.settingsButton -> listener.onButtonSelected(R.id.settingsButton)
         }
     }
 }

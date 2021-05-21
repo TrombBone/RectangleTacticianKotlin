@@ -14,7 +14,7 @@ import com.example.rectangletacticiankotlin.MainGameActivity.Companion.allData
 class MySurfaceView(context: Context, attrs: AttributeSet?) : SurfaceView(context, attrs),
     SurfaceHolder.Callback {
     init {
-        SurfaceView(context, attrs)
+        //SurfaceView(context, attrs)
         holder.addCallback(this)
     }
 
@@ -26,19 +26,7 @@ class MySurfaceView(context: Context, attrs: AttributeSet?) : SurfaceView(contex
     private var canvasHeight = 0
     private var cellSize = 0f
 
-    //for scale:
-//    private var fieldStartX = 0f
-//    private var fieldStartY = 0f
-//    private var fieldEndX = 0f
-//    private var fieldEndY = 0f
-
     lateinit var mainGameFragment: MainGameFragment
-
-//    companion object {
-//        var rectDrawNow = RectF()
-//        var isEndGame = allData.isEndGame
-//        var isRunning = true
-//    }
 
     override fun onTouchEvent(ev: MotionEvent): Boolean {
         touchX = ev.x

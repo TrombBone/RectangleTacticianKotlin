@@ -12,7 +12,7 @@ import androidx.fragment.app.Fragment
 import com.example.rectangletacticiankotlin.MainGameActivity.Companion.allData
 
 
-class MainGameFragment(private val listener: OnFragmentListener?) : Fragment(), View.OnClickListener {
+class MainGameFragment(private val listener: OnFragmentListener) : Fragment(), View.OnClickListener {
 
     private lateinit var linearLayout: LinearLayout
     private lateinit var exceptionTV: TextView
@@ -44,82 +44,6 @@ class MainGameFragment(private val listener: OnFragmentListener?) : Fragment(), 
 
         mySurfaceView = view.findViewById(R.id.mySurfaceView)
         mySurfaceView.mainGameFragment = this
-
-/*
-        val surfaceView: ZoomSurfaceView = view.findViewById(R.id.zoom_Surface_View)
-        surfaceView.setContentSize(linearLayout.width.toFloat(), linearLayout.height.toFloat())
-
-        surfaceView.addCallback(object : ZoomSurfaceView.Callback {
-
-            lateinit var drawThread: DrawThread
-            override fun onZoomSurfaceCreated(view: ZoomSurfaceView) {
-                val surface: Surface? = view.surface
-                //view.setContentSize(surfaceView.width.toFloat(), surfaceView.height.toFloat())
-                //view.realZoomTo(view.realZoom / 100, true)
-                drawThread = DrawThread(surface)
-                drawThread.start()
-            }
-
-            override fun onZoomSurfaceDestroyed(view: ZoomSurfaceView) {
-                drawThread.isRunning = false
-            }
-
-            val a = view.setOnTouchListener { _, event ->
-                touchX = event.x
-                touchY = event.y
-                return@setOnTouchListener false
-            }
-
-            var cellSize = 0f
-            var canDraw = true
-            var touchX = 0f
-            var touchY = 0f
-
-            inner class DrawThread(private val surface: Surface?) : Thread() {
-                var isRunning = true
-                private val p = Paint()
-
-                override fun run() {
-//                    var canvas: Canvas? = surface?.lockCanvas(null)
-//
-////                    val bitmap = Bitmap.createBitmap(linearLayout.width, linearLayout.height, Bitmap.Config.ARGB_8888)
-////                    canvas?.setBitmap(bitmap)
-//                    surface?.unlockCanvasAndPost(canvas)
-                    while (isRunning) {
-                        val canvas = surface?.lockCanvas(null)
-                        p.color = Color.BLACK
-                        p.style = Paint.Style.STROKE// contours
-                        p.strokeWidth = 0.1f
-
-                        if (canvas != null) {
-                            canvas.drawColor(Color.WHITE)
-
-                            val canvasWidth = canvas.width
-                            val canvasHeight = canvas.height
-                            //Log.d("my", "canvasWidth: $canvasWidth")
-                            Log.d("my", "canvasWidth: ${canvas.width}, canvasHeight: ${canvas.height}")
-
-//                            cellSize = canvasWidth.toFloat() / fieldWidth
-//                            Log.d("my", "cellSize: $cellSize")
-
-                            canvas.drawLine(0f, 0f, 0.5f, 0.5f, p)
-//                            drawMesh(canvas)
-//                            drawStartPlaces(canvas)
-//
-//                            drawPlayersRectOld(canvas)
-//                            drawPlayerRectNow(canvas)
-
-                            //mainChecker()
-                            surface?.unlockCanvasAndPost(canvas)
-                            sleep(1000)
-                        }
-                    }
-                }
-                //my methods
-            }
-
-        })
- */
 
 //        allData.apply {
 //            Log.d("my", "playerCountMainGameFragment: $playerCount")
@@ -186,8 +110,8 @@ class MainGameFragment(private val listener: OnFragmentListener?) : Fragment(), 
                         playersRectangles.getOrPut(playerNumber, { mutableListOf() }).add(rectDrawNow)
                         if (isEndGame && playerNumber == playerCount) {
 //                            lastTouch = true
-                            listener?.onButtonSelected(R.id.mySurfaceView)// id of this surfaceView
-                        } else listener?.onButtonSelected(R.id.nextTurnButton)// next turn
+                            listener.onButtonSelected(R.id.mySurfaceView)// id of this surfaceView
+                        } else listener.onButtonSelected(R.id.nextTurnButton)// next turn
                         isRunning = false
 //                      Log.d("my", "playersRectangles: $playersRectangles")
                     }

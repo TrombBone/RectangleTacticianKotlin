@@ -49,7 +49,7 @@ class MainGameActivity : AppCompatActivity(), OnFragmentListener {
             setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
             PlayerStartFragment(this@MainGameActivity as OnFragmentListener).apply {
                 Bundle().also {
-                    it.putInt("playerNumber", playerNumber)
+                    it.putInt("playerNumber", allData.playerNumber)
                     arguments = it
                 }
                 replace(R.id.frame_container_main, this)
@@ -68,16 +68,6 @@ class MainGameActivity : AppCompatActivity(), OnFragmentListener {
             R.id.generateSidesButton -> supportFragmentManager.beginTransaction().apply {
                 setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
                 MainGameFragment(this@MainGameActivity as OnFragmentListener).apply {
-//                    Bundle().also {
-//                        it.putInt("playerCount", playerCount)
-//                        it.putInt("fieldWidth", fieldWidth)
-//                        it.putInt("fieldHeight", fieldHeight)
-//                        it.putInt("playerNumber", playerNumber)
-//                        it.putInt("rectWidth", rectWidth)
-//                        it.putInt("rectHeight", rectHeight)
-//                        arguments = it
-////                        Log.d("my", "arguments_MainGameActivityForShare: $arguments")
-//                    }
                     replace(R.id.frame_container_main, this)
                 }
                 commit()

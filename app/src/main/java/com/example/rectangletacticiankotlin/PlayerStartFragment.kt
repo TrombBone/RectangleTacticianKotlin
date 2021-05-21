@@ -9,7 +9,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 
-class PlayerStartFragment(val listener: OnFragmentListener?) : Fragment(), View.OnTouchListener {
+class PlayerStartFragment(val listener: OnFragmentListener) : Fragment(), View.OnTouchListener {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_player_start, container, false)
 
@@ -33,7 +33,7 @@ class PlayerStartFragment(val listener: OnFragmentListener?) : Fragment(), View.
     }
 
     override fun onTouch(v: View?, event: MotionEvent?): Boolean {
-        listener?.onButtonSelected(R.id.playerNotificationTV)
+        listener.onButtonSelected(R.id.playerNotificationTV)
         return true
     }
 }

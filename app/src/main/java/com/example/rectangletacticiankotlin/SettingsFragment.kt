@@ -11,7 +11,10 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import com.google.android.material.textfield.TextInputEditText
 
-class SettingsFragment(val listener: OnFragmentListener) : Fragment() {
+const val MIN_FIELD_SIZE = 20
+const val MAX_FIELD_SIZE = 60
+
+class SettingsFragment(private val listener: OnFragmentListener) : Fragment() {
 
     private lateinit var playerSwitch: SwitchCompat
     private lateinit var fieldWidthTIET: TextInputEditText
@@ -19,7 +22,7 @@ class SettingsFragment(val listener: OnFragmentListener) : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_settings, container, false)
-        (activity as AppCompatActivity).supportActionBar?.title = getString(R.string.settingsActivity_name)
+        //(activity as AppCompatActivity).supportActionBar?.title = getString(R.string.settingsActivity_name)
 
         playerSwitch = view.findViewById(R.id.playersCountSwitch)
         fieldWidthTIET = view.findViewById(R.id.fieldWidthTIET)
@@ -27,27 +30,27 @@ class SettingsFragment(val listener: OnFragmentListener) : Fragment() {
         load()
 
         fieldWidthTIET.apply {
-            if (text.toString() == "") setText("25")
+            if (text.toString() == "") setText(FIELD_WIDTH_DEFAULT)
             doAfterTextChanged {
                 setSelection(text?.length ?: 0)
                 when {
                     text.toString() == "" -> setText("0")
                     text.toString().matches(Regex("""0+([0-9])+""")) -> setText(text.toString().replace("0", ""))
-                    text.toString().toInt() > 60 -> setText("60")
-                    text.toString().toInt() < 20 -> error = getString(R.string.fieldSizeError_text)
+                    text.toString().toInt() > MAX_FIELD_SIZE -> setText(MAX_FIELD_SIZE)
+                    text.toString().toInt() < MIN_FIELD_SIZE -> error = getString(R.string.fieldSizeError_text)
                 }
             }
         }
 
         fieldHeightTIET.apply {
-            if (text.toString() == "") setText("35")
+            if (text.toString() == "") setText(FIELD_HEIGHT_DEFAULT)
             doAfterTextChanged {
                 setSelection(text?.length ?: 0)
                 when {
                     text.toString() == "" -> setText("0")
                     text.toString().matches(Regex("""0+([0-9])+""")) -> setText(text.toString().replace("0", ""))
-                    text.toString().toInt() > 60 -> setText("60")
-                    text.toString().toInt() < 20 -> error = getString(R.string.fieldSizeError_text)
+                    text.toString().toInt() > MAX_FIELD_SIZE -> setText(MAX_FIELD_SIZE)
+                    text.toString().toInt() < MIN_FIELD_SIZE -> error = getString(R.string.fieldSizeError_text)
                 }
             }
         }
@@ -56,8 +59,8 @@ class SettingsFragment(val listener: OnFragmentListener) : Fragment() {
     }
 
     private fun save() {
-        if (fieldWidthTIET.text.toString().toInt() < 20) fieldWidthTIET.setText("20")
-        if (fieldHeightTIET.text.toString().toInt() < 20) fieldHeightTIET.setText("20")
+        if (fieldWidthTIET.text.toString().toInt() < MIN_FIELD_SIZE) fieldWidthTIET.setText(MIN_FIELD_SIZE)
+        if (fieldHeightTIET.text.toString().toInt() < MIN_FIELD_SIZE) fieldHeightTIET.setText(MIN_FIELD_SIZE)
 
         val sPref = activity?.getPreferences(AppCompatActivity.MODE_PRIVATE) ?: throw IllegalStateException("Activity cannot be null")
         val editor: SharedPreferences.Editor = sPref.edit()
@@ -66,7 +69,7 @@ class SettingsFragment(val listener: OnFragmentListener) : Fragment() {
         editor.putString("fieldHeight", fieldHeightTIET.text.toString())
         editor.apply()
 
-        listener?.onParamsSelected(mapOf(
+        listener.onParamsSelected(mapOf(
                 "playerCount" to playerSwitch.isChecked.toString(),
                 "fieldWidth" to fieldWidthTIET.text.toString(),
                 "fieldHeight" to fieldHeightTIET.text.toString()
