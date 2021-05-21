@@ -8,7 +8,7 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import org.junit.Test
 
-class MainGameFragmentTest {
+class MainGameFragmentTest {// Process crashed
 
     @Test
     fun exceptionTVNoException() {

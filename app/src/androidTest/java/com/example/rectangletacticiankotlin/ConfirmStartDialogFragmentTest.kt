@@ -12,6 +12,7 @@ class ConfirmStartDialogFragmentTest {
     fun confirmStartDialogFragmentTest() {
         with(launchFragment<ConfirmStartDialogFragment>()) {
             onFragment { fragment ->
+            //методы, описанные ниже, которые я прочитал в документации, не работают, требуют ещё аргументов...
 //                assertThat(fragment.dialog).isNotNull()
 //                assertThat(fragment.requireDialog().isShowing).isTrue()
 //                fragment.dismiss()

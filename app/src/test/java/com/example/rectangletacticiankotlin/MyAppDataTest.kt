@@ -8,6 +8,7 @@ class MyAppDataTest {
 
     @Test
     fun corners() {
+        val myAppData = MyAppData()
         val points = listOf(
             RectF(0f, 0f, 35f, 35f),
             RectF(0f, 0f, 35f, 35f),
@@ -17,12 +18,14 @@ class MyAppDataTest {
             RectF(3f, 0f, 3f, 35f),
             RectF(1f, 1f, 5f, 5f)
         )
-        val result = MyAppData().corners(points)
+        // Method equals in android.graphics.PointF not mocked
+        // Вызывается в оригинальной функции
+        val result = myAppData.corners(points)
 
-        assertEquals(result, listOf(
+        assertEquals(listOf(
             RectF(10f, 10f, 50f, 50f),
             RectF(0f, 0f, 35f, 35f),
             RectF(1f, 1f, 5f, 5f)
-        ))
+        ), result)
     }
 }

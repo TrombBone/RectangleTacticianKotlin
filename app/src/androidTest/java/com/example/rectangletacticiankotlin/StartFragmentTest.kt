@@ -16,6 +16,6 @@ class StartFragmentTest {
         onView(withId(R.id.startButton)).perform(click())
         onView(withId(R.id.regulationsButton)).perform(click())
         onView(withId(R.id.settingsButton)).perform(click())
-        //pressBack()
+        //pressBack() //так и не понял, как это использовать
     }
 }
