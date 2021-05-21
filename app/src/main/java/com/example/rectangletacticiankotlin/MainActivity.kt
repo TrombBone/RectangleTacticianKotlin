@@ -4,11 +4,16 @@ import android.content.pm.ActivityInfo
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 
+const val PLAYER_COUNT_DEFAULT = 2
+const val FIELD_WIDTH_DEFAULT = 25
+const val FIELD_HEIGHT_DEFAULT = 35
+
 class MainActivity : AppCompatActivity(), OnFragmentListener {
 
     private var playerCount = 0
     private var fieldWidth = 0
     private var fieldHeight = 0
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -17,14 +22,14 @@ class MainActivity : AppCompatActivity(), OnFragmentListener {
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
         getPreferences(MODE_PRIVATE).apply {
-            playerCount = if (getString("playerCount", "false") == "true") 4 else 2
-            fieldWidth = getString("fieldWidth", "25")?.toInt() ?: 25
-            fieldHeight = getString("fieldHeight", "35")?.toInt() ?: 35
+            playerCount = if (getString("playerCount", "false") == "true") 4 else PLAYER_COUNT_DEFAULT
+            fieldWidth = getString("fieldWidth", FIELD_WIDTH_DEFAULT.toString())?.toInt() ?: FIELD_WIDTH_DEFAULT
+            fieldHeight = getString("fieldHeight", FIELD_HEIGHT_DEFAULT.toString())?.toInt() ?: FIELD_HEIGHT_DEFAULT
         }
 
         supportFragmentManager.beginTransaction().apply {
             setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
-            replace(R.id.frame_container_start, StartFragment())
+            replace(R.id.frame_container_start, StartFragment(this@MainActivity as OnFragmentListener))
             commit()
         }
 
@@ -55,7 +60,7 @@ class MainActivity : AppCompatActivity(), OnFragmentListener {
             }
             R.id.settingsButton -> supportFragmentManager.beginTransaction().apply {
                 setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right, android.R.anim.slide_in_left, android.R.anim.slide_out_right)
-                replace(R.id.frame_container_start, SettingsFragment())
+                replace(R.id.frame_container_start, SettingsFragment(this@MainActivity as OnFragmentListener))
                 addToBackStack(null)
                 commit()
             }
