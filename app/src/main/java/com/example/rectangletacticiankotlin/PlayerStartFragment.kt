@@ -9,11 +9,11 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 
-class PlayerStartFragment(val listener: OnFragmentListener) : Fragment(), View.OnTouchListener {
+class PlayerStartFragment(private val listener: OnFragmentListener, private val playerNumber: Int) : Fragment(), View.OnTouchListener {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_player_start, container, false)
 
-        val playerNumber = arguments?.getInt("playerNumber") ?: 1
+        //val playerNumber = arguments?.getInt("playerNumber") ?: 1
 
         view.findViewById<TextView>(R.id.playerNotificationTV).apply {
             text = "${getString(R.string.playerNotificationTV_text)} $playerNumber"

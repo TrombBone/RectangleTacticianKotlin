@@ -31,7 +31,6 @@ class FinishDialogFragment : DialogFragment() {
                         startActivity(intent)
                     }
                     myActivity.finish()
-                    MainGameActivity.cleanAllData()
                 }
                 .setNegativeButton(R.string.showField_text) { _, _ ->
                     val myDialog = dialog ?: throw IllegalStateException("Dialog cannot be null")

@@ -55,7 +55,7 @@
 
     <string name="gameOver">Игра окончена</string>
     <string name="finishDialog_text">На поле закончилось свободное место.\n
-        Вот ваши результаты: </string>
+    Вот ваши результаты:</string>
     <string name="showField_text">Посмотреть на поле</string>
     <string name="endGame_text">Закончить</string>
 

@@ -8,11 +8,13 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import org.junit.Test
 
-class MainGameFragmentTest {// Process crashed
+class MainGameFragmentTest {// Process crashed. All test terminate
+
+    private val allData = MyAppData()
 
     @Test
     fun exceptionTVNoException() {
-        val mainGameFragment = MainGameFragment(OnFragmentListenerStub())
+        val mainGameFragment = MainGameFragment(OnFragmentListenerStub(), allData)
         launchFragmentInContainer {
             mainGameFragment
         }
@@ -22,7 +24,7 @@ class MainGameFragmentTest {// Process crashed
 
     @Test
     fun exceptionTVNoRectangle() {
-        val mainGameFragment = MainGameFragment(OnFragmentListenerStub())
+        val mainGameFragment = MainGameFragment(OnFragmentListenerStub(), allData)
         launchFragmentInContainer {
             mainGameFragment
         }
@@ -32,7 +34,7 @@ class MainGameFragmentTest {// Process crashed
 
     @Test
     fun exceptionTVOutOfBounds() {
-        val mainGameFragment = MainGameFragment(OnFragmentListenerStub())
+        val mainGameFragment = MainGameFragment(OnFragmentListenerStub(), allData)
         launchFragmentInContainer {
             mainGameFragment
         }
@@ -42,7 +44,7 @@ class MainGameFragmentTest {// Process crashed
 
     @Test
     fun exceptionTVLocation() {
-        val mainGameFragment = MainGameFragment(OnFragmentListenerStub())
+        val mainGameFragment = MainGameFragment(OnFragmentListenerStub(), allData)
         launchFragmentInContainer {
             mainGameFragment
         }
@@ -52,7 +54,7 @@ class MainGameFragmentTest {// Process crashed
 
     @Test
     fun exceptionTVLocationFirstRect() {
-        val mainGameFragment = MainGameFragment(OnFragmentListenerStub())
+        val mainGameFragment = MainGameFragment(OnFragmentListenerStub(), allData)
         launchFragmentInContainer {
             mainGameFragment
         }
@@ -62,18 +64,18 @@ class MainGameFragmentTest {// Process crashed
 
     @Test
     fun exceptionTVNotFreeSpace() {
-        val mainGameFragment = MainGameFragment(OnFragmentListenerStub())
+        val mainGameFragment = MainGameFragment(OnFragmentListenerStub(), allData)
         launchFragmentInContainer {
             mainGameFragment
         }
-        mainGameFragment.exceptionTVNotFreeSpace()
+        mainGameFragment.exceptionTVNoFreeSpace()
         onView(withId(R.id.exceptionTV)).check(matches(withText(R.string.exceptionTV_neutral_NotFreeSpaceException_text)))
     }
 
     @Test
     fun onClick() {
         launchFragmentInContainer {
-            MainGameFragment(OnFragmentListenerStub())
+            MainGameFragment(OnFragmentListenerStub(), allData)
         }
         onView(withId(R.id.rotationButton)).perform(click())
         onView(withId(R.id.nextTurnButton)).perform(click())
