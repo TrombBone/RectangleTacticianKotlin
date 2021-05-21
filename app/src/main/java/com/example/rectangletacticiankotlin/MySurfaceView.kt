@@ -9,14 +9,16 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.SurfaceHolder
 import android.view.SurfaceView
-import com.example.rectangletacticiankotlin.MainGameActivity.Companion.allData
 
-class MySurfaceView(context: Context, attrs: AttributeSet?) : SurfaceView(context, attrs),
+class MySurfaceView(context: Context, attrs: AttributeSet?) :
+    SurfaceView(context, attrs),
     SurfaceHolder.Callback {
+
     init {
-        //SurfaceView(context, attrs)
         holder.addCallback(this)
     }
+
+    lateinit var allData: MyAppData
 
     private var canDraw = false
     private var notSpaceCanDraw = true
@@ -74,12 +76,12 @@ class MySurfaceView(context: Context, attrs: AttributeSet?) : SurfaceView(contex
                         canDraw = notSpaceCanDraw
                         mainGameFragment.apply {
                             activity?.runOnUiThread {
-                                exceptionTVNotFreeSpace()
+                                exceptionTVNoFreeSpace()
                             }
                         }
                     } else {
                         notSpaceCanDraw = true
-                        allData.rectLocationChecker(allData.rectDrawNow, true)
+                        allData.rectLocationChecker(allData.rectDrawNow, true, allData.listener)
                     }
 
                     drawPlayerRectNow(canvas)
@@ -236,6 +238,7 @@ class MySurfaceView(context: Context, attrs: AttributeSet?) : SurfaceView(contex
 
     override fun surfaceCreated(holder: SurfaceHolder) {
         allData.mainGameFragment = mainGameFragment
+        allData.rectDrawNow = RectF()
         dt = DrawThread(holder)
         dt.start()
     }
