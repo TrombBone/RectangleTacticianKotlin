@@ -10,10 +10,7 @@ const val FIELD_HEIGHT_DEFAULT = 35
 
 class MainActivity : AppCompatActivity(), OnFragmentListener {
 
-    private var playerCount = 0
-    private var fieldWidth = 0
-    private var fieldHeight = 0
-
+    private val settingsData = SettingsData()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,11 +18,7 @@ class MainActivity : AppCompatActivity(), OnFragmentListener {
         supportActionBar?.hide() ?: throw NoSuchElementException("ActionBar is lack")
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
-        getPreferences(MODE_PRIVATE).apply {
-            playerCount = if (getString("playerCount", "false") == "true") 4 else PLAYER_COUNT_DEFAULT
-            fieldWidth = getString("fieldWidth", FIELD_WIDTH_DEFAULT.toString())?.toInt() ?: FIELD_WIDTH_DEFAULT
-            fieldHeight = getString("fieldHeight", FIELD_HEIGHT_DEFAULT.toString())?.toInt() ?: FIELD_HEIGHT_DEFAULT
-        }
+        settingsData.getPref(this)
 
         supportFragmentManager.beginTransaction().apply {
             setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
@@ -42,13 +35,7 @@ class MainActivity : AppCompatActivity(), OnFragmentListener {
         when (buttonId) {
             R.id.startButton -> {
                 ConfirmStartDialogFragment().apply {
-                    Bundle().also {
-                        it.putInt("playerCount", playerCount)
-                        it.putInt("fieldWidth", fieldWidth)
-                        it.putInt("fieldHeight", fieldHeight)
-                        arguments = it
-//                        Log.d("my", "myDialogFragmentBundle: $it")
-                    }
+                    arguments = settingsData.sendBundle()
                     show(supportFragmentManager, "confirmStartDialog")
                 }
             }
@@ -60,7 +47,7 @@ class MainActivity : AppCompatActivity(), OnFragmentListener {
             }
             R.id.settingsButton -> supportFragmentManager.beginTransaction().apply {
                 setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right, android.R.anim.slide_in_left, android.R.anim.slide_out_right)
-                replace(R.id.frame_container_start, SettingsFragment(this@MainActivity as OnFragmentListener))
+                replace(R.id.frame_container_start, SettingsFragment(this@MainActivity as OnFragmentListener, settingsData))
                 addToBackStack(null)
                 commit()
             }
@@ -68,9 +55,10 @@ class MainActivity : AppCompatActivity(), OnFragmentListener {
     }
 
     override fun onParamsSelected(params: Map<String, String>) {
-        playerCount = if (params["playerCount"] == "true") 4 else 2
-        fieldWidth = params["fieldWidth"]?.toInt() ?: 25
-        fieldHeight = params["fieldHeight"]?.toInt() ?: 35
+        settingsData.getFromSettings(params)
+//        playerCount = if (params["playerCount"] == "true") 4 else 2
+//        fieldWidth = params["fieldWidth"]?.toInt() ?: 25
+//        fieldHeight = params["fieldHeight"]?.toInt() ?: 35
 //        Log.d("my", "playerCountMainActivityFromSettings: $playerCount")
 //        Log.d("my", "fieldWidthMainActivityFromSettings: $fieldWidth")
 //        Log.d("my", "fieldHeightMainActivityFromSettings: $fieldHeight")
