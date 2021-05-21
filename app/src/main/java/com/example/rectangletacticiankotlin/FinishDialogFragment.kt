@@ -27,23 +27,18 @@ class FinishDialogFragment : DialogFragment() {
                     for (i in fm.fragments) {
                         fm.beginTransaction().remove(i)
                     }
-                    Intent(myActivity, MainActivity::class.java).also{ it ->
-                        //it.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                        startActivity(it)
+                    Intent(myActivity, MainActivity::class.java).also{ intent ->
+                        startActivity(intent)
                     }
                     myActivity.finish()
-                    //myActivity.finishAffinity()
-                    MainGameFragment.clean()
+                    MainGameActivity.cleanAllData()
                 }
                 .setNegativeButton(R.string.showField_text) { _, _ ->
                     val myDialog = dialog ?: throw IllegalStateException("Dialog cannot be null")
                     myDialog.hide()
                     if (!myDialog.isShowing) {
-                        //Log.d("my", "I'm wait!!!")
                         Timer().schedule(7000L) {
-                            //Log.d("my", "I'm try!!!")
                             myActivity.runOnUiThread {
-                                //Log.d("my", "I'm try2!!!")
                                 show(myActivity.supportFragmentManager, "finishDialog")
                             }
                         }

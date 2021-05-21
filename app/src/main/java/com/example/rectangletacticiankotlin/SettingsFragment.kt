@@ -11,7 +11,7 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import com.google.android.material.textfield.TextInputEditText
 
-class SettingsFragment : Fragment() {
+class SettingsFragment(val listener: OnFragmentListener) : Fragment() {
 
     private lateinit var playerSwitch: SwitchCompat
     private lateinit var fieldWidthTIET: TextInputEditText
@@ -66,7 +66,6 @@ class SettingsFragment : Fragment() {
         editor.putString("fieldHeight", fieldHeightTIET.text.toString())
         editor.apply()
 
-        val listener = activity as OnFragmentListener?
         listener?.onParamsSelected(mapOf(
                 "playerCount" to playerSwitch.isChecked.toString(),
                 "fieldWidth" to fieldWidthTIET.text.toString(),
