@@ -3,7 +3,7 @@ package com.example.rectangletacticiankotlin
 import android.graphics.PointF
 import android.graphics.RectF
 
-class MyAppData() {
+class MyAppData {
 
     var playerCount = 0
     var playerNumber = 1
@@ -25,6 +25,7 @@ class MyAppData() {
     var isRunning = true
 
     lateinit var mainGameFragment: MainGameFragment
+    lateinit var listener: OnExceptionHintListener
 
     fun corners(list: List<RectF>): List<PointF> {// selects all convex and concave corners
         val result = mutableListOf<PointF>()
@@ -47,39 +48,38 @@ class MyAppData() {
         return result
     }
 
-    fun rectLocationChecker(rectF: RectF, isShowExceptionHint: Boolean): Boolean {
-        mainGameFragment.apply {
-            val myActivity = activity ?: throw IllegalStateException("Activity cannot be null")
+    fun rectLocationChecker(rectF: RectF, isShowExceptionHint: Boolean, listener: OnExceptionHintListener): Boolean {
+        listener.apply {
             if (rectF.isEmpty) {
-                if (isShowExceptionHint) myActivity.runOnUiThread { exceptionTVNoRectangle() }
+                if (isShowExceptionHint) onExceptionSelected("noRectangle")
             } else if (rectF.left < 0 || rectF.top < 0 ||
                 rectF.right > fieldWidth * cellSize || rectF.bottom > fieldHeight * cellSize
             ) {
-                if (isShowExceptionHint) myActivity.runOnUiThread { exceptionTVOutOfBounds() }
-            } else if (playersRectangles[playerNumber] == null) {// first rectangle must be in the player's corner
+                if (isShowExceptionHint) onExceptionSelected("outOfBounds")
+            } else if (playersRectangles[playerNumber] == null) {
                 when (playerNumber) {
                     1 -> if (rectF.left != 0f || rectF.top != 0f) {
-                        if (isShowExceptionHint) myActivity.runOnUiThread { exceptionTVLocationFirstRect() }
+                        if (isShowExceptionHint) onExceptionSelected("locationFirstRect")
                     } else {
-                        if (isShowExceptionHint) myActivity.runOnUiThread { exceptionTVNoException() }
+                        if (isShowExceptionHint) onExceptionSelected("noException")
                         return true
                     }
                     2 -> if (rectF.right != fieldWidth * cellSize || rectF.bottom != fieldHeight * cellSize) {
-                        if (isShowExceptionHint) myActivity.runOnUiThread { exceptionTVLocationFirstRect() }
+                        if (isShowExceptionHint) onExceptionSelected("locationFirstRect")
                     } else {
-                        if (isShowExceptionHint) myActivity.runOnUiThread { exceptionTVNoException() }
+                        if (isShowExceptionHint) onExceptionSelected("noException")
                         return true
                     }
                     3 -> if (rectF.right != fieldWidth * cellSize || rectF.top != 0f) {
-                        if (isShowExceptionHint) myActivity.runOnUiThread { exceptionTVLocationFirstRect() }
+                        if (isShowExceptionHint) onExceptionSelected("locationFirstRect")
                     } else {
-                        if (isShowExceptionHint) myActivity.runOnUiThread { exceptionTVNoException() }
+                        if (isShowExceptionHint) onExceptionSelected("noException")
                         return true
                     }
                     4 -> if (rectF.left != 0f || rectF.bottom != fieldHeight * cellSize) {
-                        if (isShowExceptionHint) myActivity.runOnUiThread { exceptionTVLocationFirstRect() }
+                        if (isShowExceptionHint) onExceptionSelected("locationFirstRect")
                     } else {
-                        if (isShowExceptionHint) myActivity.runOnUiThread { exceptionTVNoException() }
+                        if (isShowExceptionHint) onExceptionSelected("noException")
                         return true
                     }
                 }
@@ -87,7 +87,7 @@ class MyAppData() {
                 for (i in 1..playerCount)
                     for (oldRect in playersRectangles[i]!!)
                         if (RectF.intersects(oldRect, rectF)) {// if intersect, not touch
-                            if (isShowExceptionHint) myActivity.runOnUiThread { exceptionTVLocation() }
+                            if (isShowExceptionHint) onExceptionSelected("location")
                             return false
                         }
                 val corns = corners(playersRectangles[playerNumber]!!)
@@ -103,7 +103,7 @@ class MyAppData() {
                         for (i in 0..points.lastIndex step 2) {// take every 2 points = continuous line
                             if ((points[i].y <= rectF.top && points[i + 1].y >= rectF.bottom) ||
                                 (points[i].y >= rectF.top && points[i + 1].y <= rectF.bottom)) {
-                                if (isShowExceptionHint) myActivity.runOnUiThread { exceptionTVNoException() }
+                                if (isShowExceptionHint) onExceptionSelected("noException")
                                 return true
                             }
                         }
@@ -115,13 +115,13 @@ class MyAppData() {
                         for (i in 0..points.lastIndex step 2) {// take every 2 points = continuous line
                             if ((points[i].x <= rectF.left && points[i + 1].x >= rectF.right) ||
                                 (points[i].x >= rectF.left && points[i + 1].x <= rectF.right)) {
-                                if (isShowExceptionHint) myActivity.runOnUiThread { exceptionTVNoException() }
+                                if (isShowExceptionHint) onExceptionSelected("noException")
                                 return true
                             }
                         }
                     }
                 }
-                if (isShowExceptionHint) myActivity.runOnUiThread { exceptionTVLocation() }// if there was no "return" in cycles in this "else"
+                if (isShowExceptionHint) onExceptionSelected("location")// if there was no "return" in cycles in this "else"
             }
         }
         return false// after the first three "if", else never
@@ -135,11 +135,11 @@ class MyAppData() {
                 if (rectLocationChecker(RectF(
                         x.toFloat(), y.toFloat(),
                         x + rectWidth * cellSize, y + rectHeight * cellSize
-                    ), false) ||
+                    ), false, listener) ||
                     rectLocationChecker(RectF(
                         x.toFloat(), y.toFloat(),
                         x + rectHeight * cellSize, y + rectWidth * cellSize
-                    ), false)
+                    ), false, listener)
                 ) return true
             }
         }

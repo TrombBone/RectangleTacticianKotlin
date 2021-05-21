@@ -9,10 +9,9 @@ import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import com.example.rectangletacticiankotlin.MainGameActivity.Companion.allData
 
-
-class MainGameFragment(private val listener: OnFragmentListener) : Fragment(), View.OnClickListener {
+class MainGameFragment(private val listener: OnFragmentListener, private val allData: MyAppData) :
+    Fragment(), View.OnClickListener, OnExceptionHintListener {
 
     private lateinit var linearLayout: LinearLayout
     private lateinit var exceptionTV: TextView
@@ -21,18 +20,11 @@ class MainGameFragment(private val listener: OnFragmentListener) : Fragment(), V
 
     private lateinit var rotationButton: Button
 
-    lateinit var mySurfaceView: MySurfaceView
+    private lateinit var mySurfaceView: MySurfaceView
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_main_game, container, false)
 //        Log.d("my", "arguments_MainGameFragment: $arguments")
-
-//        playerCount = arguments?.getInt("playerCount") ?: 2
-//        fieldWidth = arguments?.getInt("fieldWidth") ?: 25
-//        fieldHeight = arguments?.getInt("fieldHeight") ?: 35
-//        playerNumber = arguments?.getInt("playerNumber") ?: 0
-//        rectWidth = arguments?.getInt("rectWidth") ?: 0
-//        rectHeight = arguments?.getInt("rectHeight") ?: 0
 
         linearLayout = view.findViewById(R.id.fragment_mainGame_LL)
         exceptionTV = view.findViewById(R.id.exceptionTV)
@@ -44,6 +36,9 @@ class MainGameFragment(private val listener: OnFragmentListener) : Fragment(), V
 
         mySurfaceView = view.findViewById(R.id.mySurfaceView)
         mySurfaceView.mainGameFragment = this
+        mySurfaceView.allData = allData
+
+        allData.listener = this
 
 //        allData.apply {
 //            Log.d("my", "playerCountMainGameFragment: $playerCount")
@@ -88,7 +83,7 @@ class MainGameFragment(private val listener: OnFragmentListener) : Fragment(), V
         exceptionTV.text = getString(R.string.exceptionTV_bad_LocationException_firstRect_text)
     }
 
-    fun exceptionTVNotFreeSpace() {
+    fun exceptionTVNoFreeSpace() {
         isNotException = true
         exceptionTV.setBackgroundColor(Color.argb(127, 127, 0, 255))
         exceptionTV.text = getString(R.string.exceptionTV_neutral_NotFreeSpaceException_text)
@@ -96,7 +91,7 @@ class MainGameFragment(private val listener: OnFragmentListener) : Fragment(), V
 
     override fun onClick(view: View) {
 //        val listener = activity as OnFragmentListener?
-        when(view.id) {
+        when (view.id) {
             R.id.rotationButton -> {
                 allData.apply {
                     rectWidth += rectHeight
@@ -110,13 +105,24 @@ class MainGameFragment(private val listener: OnFragmentListener) : Fragment(), V
                         playersRectangles.getOrPut(playerNumber, { mutableListOf() }).add(rectDrawNow)
                         if (isEndGame && playerNumber == playerCount) {
 //                            lastTouch = true
-                            listener.onButtonSelected(R.id.mySurfaceView)// id of this surfaceView
-                        } else listener.onButtonSelected(R.id.nextTurnButton)// next turn
+                            this@MainGameFragment.listener.onButtonSelected(R.id.mySurfaceView)// id of this surfaceView
+                        } else this@MainGameFragment.listener.onButtonSelected(R.id.nextTurnButton)// next turn
                         isRunning = false
 //                      Log.d("my", "playersRectangles: $playersRectangles")
                     }
                 }
             }
+        }
+    }
+
+    override fun onExceptionSelected(name: String) {
+        when (name) {
+            "noException" -> activity?.runOnUiThread { exceptionTVNoException() }
+            "noRectangle" -> activity?.runOnUiThread { exceptionTVNoRectangle() }
+            "outOfBounds" -> activity?.runOnUiThread { exceptionTVOutOfBounds() }
+            "location" -> activity?.runOnUiThread { exceptionTVLocation() }
+            "locationFirstRect" -> activity?.runOnUiThread { exceptionTVLocationFirstRect() }
+            "noFreeSpace" -> activity?.runOnUiThread { exceptionTVNoFreeSpace() }
         }
     }
 }

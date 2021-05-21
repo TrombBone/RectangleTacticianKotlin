@@ -6,22 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 
 class MainGameActivity : AppCompatActivity(), OnFragmentListener {
 
-    private var playerCount = 0
-    private var fieldWidth = 0
-    private var fieldHeight = 0
-    private var playerNumber = 1
-
-    private var rectWidth = 0
-    private var rectHeight = 0
-
-//    var isEndGame = false
-
-    companion object {
-        var allData = MyAppData()
-        fun cleanAllData() {
-            allData = MyAppData()
-        }
-    }
+    var allData = MyAppData()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,13 +16,9 @@ class MainGameActivity : AppCompatActivity(), OnFragmentListener {
 
         nextTurn()
 
-        playerCount = intent.getIntExtra("playerCount", 2)
-        fieldWidth = intent.getIntExtra("fieldWidth", 25)
-        fieldHeight = intent.getIntExtra("fieldHeight", 35)
-
-        allData.playerCount = playerCount
-        allData.fieldWidth = fieldWidth
-        allData.fieldHeight = fieldHeight
+        allData.playerCount = intent.getIntExtra("playerCount", 2)
+        allData.fieldWidth = intent.getIntExtra("fieldWidth", 25)
+        allData.fieldHeight = intent.getIntExtra("fieldHeight", 35)
 
 //        Log.d("my", "playerCount_MainGameActivity: $playerCount")
 //        Log.d("my", "fieldWidth_MainGameActivity: $fieldWidth")
@@ -47,11 +28,11 @@ class MainGameActivity : AppCompatActivity(), OnFragmentListener {
     private fun nextTurn() {
         supportFragmentManager.beginTransaction().apply {
             setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
-            PlayerStartFragment(this@MainGameActivity as OnFragmentListener).apply {
-                Bundle().also {
-                    it.putInt("playerNumber", allData.playerNumber)
-                    arguments = it
-                }
+            PlayerStartFragment(this@MainGameActivity as OnFragmentListener, allData.playerNumber).apply {
+//                Bundle().also {
+//                    it.putInt("playerNumber", allData.playerNumber)
+//                    arguments = it
+//                }
                 replace(R.id.frame_container_main, this)
             }
             commit()
@@ -67,7 +48,7 @@ class MainGameActivity : AppCompatActivity(), OnFragmentListener {
             }
             R.id.generateSidesButton -> supportFragmentManager.beginTransaction().apply {
                 setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
-                MainGameFragment(this@MainGameActivity as OnFragmentListener).apply {
+                MainGameFragment(this@MainGameActivity as OnFragmentListener, allData).apply {
                     replace(R.id.frame_container_main, this)
                 }
                 commit()
@@ -99,10 +80,8 @@ class MainGameActivity : AppCompatActivity(), OnFragmentListener {
     }
 
     override fun onParamsSelected(params: Map<String, String>) {
-        rectWidth = params["rectWidth"]?.toInt() ?: 0
-        rectHeight = params["rectHeight"]?.toInt() ?: 0
-        allData.rectWidth = rectWidth
-        allData.rectHeight = rectHeight
+        allData.rectWidth = params["rectWidth"]?.toInt() ?: 0
+        allData.rectHeight = params["rectHeight"]?.toInt() ?: 0
 //        Log.d("my", "rectWidthFromDiceActivity: $rectWidth")
 //        Log.d("my", "rectHeightFromDiceActivity: $rectHeight")
     }
