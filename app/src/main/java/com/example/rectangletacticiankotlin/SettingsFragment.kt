@@ -60,19 +60,16 @@ class SettingsFragment(private val listener: OnFragmentListener, val settingsDat
         if (fieldWidthTIET.text.toString().toInt() < MIN_FIELD_SIZE) fieldWidthTIET.setText(MIN_FIELD_SIZE.toString())
         if (fieldHeightTIET.text.toString().toInt() < MIN_FIELD_SIZE) fieldHeightTIET.setText(MIN_FIELD_SIZE.toString())
 
-        listener.onParamsSelected(settingsData.setPref(
-            requireActivity(),
-            listOf(
-                playerSwitch.isChecked.toString(),
-                fieldWidthTIET.text.toString(),
-                fieldHeightTIET.text.toString()
-            )
-        ))
+        settingsData.apply {
+            fieldWidth = fieldWidthTIET.text.toString().toInt()
+            fieldHeight = fieldHeightTIET.text.toString().toInt()
+            playerCount = if (playerSwitch.isChecked) 4 else PLAYER_COUNT_DEFAULT
+            setPref(requireActivity())
+        }
     }
 
     private fun load() {
         settingsData.apply {
-            getPref(requireActivity())
             playerSwitch.isChecked = playerCount == 4
             fieldWidthTIET.setText(fieldWidth.toString())
             fieldHeightTIET.setText(fieldHeight.toString())

@@ -12,7 +12,7 @@ import java.util.*
 import kotlin.concurrent.schedule
 import kotlin.random.Random
 
-class DiceFragment(private val listener: OnFragmentListener) : Fragment(), View.OnClickListener {
+class DiceFragment(private val listener: OnFragmentListener, private val allData: MyAppData) : Fragment(), View.OnClickListener {
 
     lateinit var sideWidthTV: TextView
     lateinit var sideHeightTV: TextView
@@ -54,11 +54,9 @@ class DiceFragment(private val listener: OnFragmentListener) : Fragment(), View.
 
         Timer().schedule(2500) {
             mediaPlayer.stop()
-            //val listener = activity as OnFragmentListener?
-            listener.apply {
-                onParamsSelected(mapOf("rectWidth" to rectWidth, "rectHeight" to rectHeight))
-                onButtonSelected(R.id.generateSidesButton)
-            }
+            allData.rectWidth = rectWidth.toInt()
+            allData.rectHeight = rectHeight.toInt()
+            listener.onButtonSelected(R.id.generateSidesButton)
         }
     }
 }

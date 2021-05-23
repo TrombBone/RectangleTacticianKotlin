@@ -34,10 +34,7 @@ class MainActivity : AppCompatActivity(), OnFragmentListener {
     override fun onButtonSelected(buttonId: Int) {
         when (buttonId) {
             R.id.startButton -> {
-                ConfirmStartDialogFragment().apply {
-                    arguments = settingsData.sendBundle()
-                    show(supportFragmentManager, "confirmStartDialog")
-                }
+                ConfirmStartDialogFragment(settingsData).show(supportFragmentManager, "confirmStartDialog")
             }
             R.id.regulationsButton -> supportFragmentManager.beginTransaction().apply {
                 setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right, android.R.anim.slide_in_left, android.R.anim.slide_out_right)
@@ -52,16 +49,6 @@ class MainActivity : AppCompatActivity(), OnFragmentListener {
                 commit()
             }
         }
-    }
-
-    override fun onParamsSelected(params: Map<String, String>) {
-        settingsData.getFromSettings(params)
-//        playerCount = if (params["playerCount"] == "true") 4 else 2
-//        fieldWidth = params["fieldWidth"]?.toInt() ?: 25
-//        fieldHeight = params["fieldHeight"]?.toInt() ?: 35
-//        Log.d("my", "playerCountMainActivityFromSettings: $playerCount")
-//        Log.d("my", "fieldWidthMainActivityFromSettings: $fieldWidth")
-//        Log.d("my", "fieldHeightMainActivityFromSettings: $fieldHeight")
     }
 
     override fun onBackPressed() {
