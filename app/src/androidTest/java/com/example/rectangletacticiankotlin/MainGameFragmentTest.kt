@@ -28,7 +28,7 @@ class MainGameFragmentTest {// Process crashed. All test terminate
         launchFragmentInContainer {
             mainGameFragment
         }
-        mainGameFragment.exceptionTVNoRectangle()
+        mainGameFragment.exceptionTVNoRect()
         onView(withId(R.id.exceptionTV)).check(matches(withText(R.string.exceptionTV_bad_NoRectangle_text)))
     }
 
