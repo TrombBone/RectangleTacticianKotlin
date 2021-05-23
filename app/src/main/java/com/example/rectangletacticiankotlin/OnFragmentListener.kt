@@ -4,6 +4,4 @@ interface OnFragmentListener {
 
     fun onButtonSelected(buttonId: Int)
 
-    fun onParamsSelected(params: Map<String, String>)
-
 }
