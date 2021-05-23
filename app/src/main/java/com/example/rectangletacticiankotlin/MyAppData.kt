@@ -27,6 +27,16 @@ class MyAppData {
     lateinit var mainGameFragment: MainGameFragment
     lateinit var listener: OnExceptionHintListener
 
+    fun nextPlayer() {
+        if (playerNumber == playerCount) playerNumber = 1 else playerNumber++
+    }
+
+    fun rotateRect() {
+        rectWidth += rectHeight
+        rectHeight = rectWidth - rectHeight
+        rectWidth -= rectHeight
+    }
+
     fun corners(list: List<RectF>): List<PointF> {// selects all convex and concave corners
         val result = mutableListOf<PointF>()
         for (rect in list) {
@@ -48,46 +58,54 @@ class MyAppData {
         return result
     }
 
-    fun rectLocationChecker(rectF: RectF, isShowExceptionHint: Boolean, listener: OnExceptionHintListener): Boolean {
+    private fun checkFirstRect(conditional: Boolean, isShowExceptionHint: Boolean): Boolean {
+        listener.apply {
+            if (conditional) {
+                if (isShowExceptionHint) onExceptionSelected(TV_BAD_LOCATION_FIRST_RECT)
+            } else {
+                if (isShowExceptionHint) { onExceptionSelected(TV_GOOD_NO_EXCEPTION) }
+                return true
+            }
+        }
+        return false
+    }
+
+    fun rectLocationChecker(rectF: RectF, isShowExceptionHint: Boolean): Boolean {
         listener.apply {
             if (rectF.isEmpty) {
-                if (isShowExceptionHint) onExceptionSelected("noRectangle")
+                if (isShowExceptionHint) onExceptionSelected(TV_BAD_NO_RECT)
             } else if (rectF.left < 0 || rectF.top < 0 ||
                 rectF.right > fieldWidth * cellSize || rectF.bottom > fieldHeight * cellSize
             ) {
-                if (isShowExceptionHint) onExceptionSelected("outOfBounds")
+                if (isShowExceptionHint) onExceptionSelected(TV_BAD_OUT_OF_BOUNDS)
             } else if (playersRectangles[playerNumber] == null) {
                 when (playerNumber) {
-                    1 -> if (rectF.left != 0f || rectF.top != 0f) {
-                        if (isShowExceptionHint) onExceptionSelected("locationFirstRect")
-                    } else {
-                        if (isShowExceptionHint) onExceptionSelected("noException")
-                        return true
-                    }
-                    2 -> if (rectF.right != fieldWidth * cellSize || rectF.bottom != fieldHeight * cellSize) {
-                        if (isShowExceptionHint) onExceptionSelected("locationFirstRect")
-                    } else {
-                        if (isShowExceptionHint) onExceptionSelected("noException")
-                        return true
-                    }
-                    3 -> if (rectF.right != fieldWidth * cellSize || rectF.top != 0f) {
-                        if (isShowExceptionHint) onExceptionSelected("locationFirstRect")
-                    } else {
-                        if (isShowExceptionHint) onExceptionSelected("noException")
-                        return true
-                    }
-                    4 -> if (rectF.left != 0f || rectF.bottom != fieldHeight * cellSize) {
-                        if (isShowExceptionHint) onExceptionSelected("locationFirstRect")
-                    } else {
-                        if (isShowExceptionHint) onExceptionSelected("noException")
-                        return true
-                    }
+                    1 -> if (checkFirstRect(
+                            rectF.left != 0f || rectF.top != 0f,
+                            isShowExceptionHint
+                        )
+                    ) return true
+                    2 -> if (checkFirstRect(
+                            rectF.right != fieldWidth * cellSize || rectF.bottom != fieldHeight * cellSize,
+                            isShowExceptionHint
+                        )
+                    ) return true
+                    3 -> if (checkFirstRect(
+                            rectF.right != fieldWidth * cellSize || rectF.top != 0f,
+                            isShowExceptionHint
+                        )
+                    ) return true
+                    4 -> if (checkFirstRect(
+                            rectF.left != 0f || rectF.bottom != fieldHeight * cellSize,
+                            isShowExceptionHint
+                        )
+                    ) return true
                 }
             } else {
                 for (i in 1..playerCount)
                     for (oldRect in playersRectangles[i]!!)
                         if (RectF.intersects(oldRect, rectF)) {// if intersect, not touch
-                            if (isShowExceptionHint) onExceptionSelected("location")
+                            if (isShowExceptionHint) onExceptionSelected(TV_BAD_LOCATION)
                             return false
                         }
                 val corns = corners(playersRectangles[playerNumber]!!)
@@ -103,7 +121,7 @@ class MyAppData {
                         for (i in 0..points.lastIndex step 2) {// take every 2 points = continuous line
                             if ((points[i].y <= rectF.top && points[i + 1].y >= rectF.bottom) ||
                                 (points[i].y >= rectF.top && points[i + 1].y <= rectF.bottom)) {
-                                if (isShowExceptionHint) onExceptionSelected("noException")
+                                if (isShowExceptionHint) onExceptionSelected(TV_GOOD_NO_EXCEPTION)
                                 return true
                             }
                         }
@@ -115,13 +133,13 @@ class MyAppData {
                         for (i in 0..points.lastIndex step 2) {// take every 2 points = continuous line
                             if ((points[i].x <= rectF.left && points[i + 1].x >= rectF.right) ||
                                 (points[i].x >= rectF.left && points[i + 1].x <= rectF.right)) {
-                                if (isShowExceptionHint) onExceptionSelected("noException")
+                                if (isShowExceptionHint) onExceptionSelected(TV_GOOD_NO_EXCEPTION)
                                 return true
                             }
                         }
                     }
                 }
-                if (isShowExceptionHint) onExceptionSelected("location")// if there was no "return" in cycles in this "else"
+                if (isShowExceptionHint) onExceptionSelected(TV_BAD_LOCATION)// if there was no "return" in cycles in this "else"
             }
         }
         return false// after the first three "if", else never
@@ -132,14 +150,20 @@ class MyAppData {
             playersRectangles[3] == null || playersRectangles[4] == null) { return true }
         for (x in 0..((fieldWidth - minOf(rectWidth, rectHeight)) * cellSize).toInt() step cellSize.toInt()) {
             for (y in 0..((fieldHeight - minOf(rectWidth, rectHeight)) * cellSize).toInt() step cellSize.toInt()) {
-                if (rectLocationChecker(RectF(
-                        x.toFloat(), y.toFloat(),
-                        x + rectWidth * cellSize, y + rectHeight * cellSize
-                    ), false, listener) ||
-                    rectLocationChecker(RectF(
-                        x.toFloat(), y.toFloat(),
-                        x + rectHeight * cellSize, y + rectWidth * cellSize
-                    ), false, listener)
+                if (rectLocationChecker(
+                        RectF(
+                            x.toFloat(), y.toFloat(),
+                            x + rectWidth * cellSize, y + rectHeight * cellSize
+                        ),
+                        false
+                    ) ||
+                    rectLocationChecker(
+                        RectF(
+                            x.toFloat(), y.toFloat(),
+                            x + rectHeight * cellSize, y + rectWidth * cellSize
+                        ),
+                        false
+                    )
                 ) return true
             }
         }
