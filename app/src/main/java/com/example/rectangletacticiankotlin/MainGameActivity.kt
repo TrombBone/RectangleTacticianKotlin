@@ -16,9 +16,9 @@ class MainGameActivity : AppCompatActivity(), OnFragmentListener {
 
         nextTurn()
 
-        allData.playerCount = intent.getIntExtra("playerCount", 2)
-        allData.fieldWidth = intent.getIntExtra("fieldWidth", 25)
-        allData.fieldHeight = intent.getIntExtra("fieldHeight", 35)
+        allData.playerCount = intent.getIntExtra(TAG_PLAYER_COUNT, PLAYER_COUNT_DEFAULT)
+        allData.fieldWidth = intent.getIntExtra(TAG_FIELD_WIDTH, FIELD_WIDTH_DEFAULT)
+        allData.fieldHeight = intent.getIntExtra(TAG_FIELD_HEIGHT, FIELD_HEIGHT_DEFAULT)
 
 //        Log.d("my", "playerCount_MainGameActivity: $playerCount")
 //        Log.d("my", "fieldWidth_MainGameActivity: $fieldWidth")
@@ -29,10 +29,6 @@ class MainGameActivity : AppCompatActivity(), OnFragmentListener {
         supportFragmentManager.beginTransaction().apply {
             setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
             PlayerStartFragment(this@MainGameActivity as OnFragmentListener, allData.playerNumber).apply {
-//                Bundle().also {
-//                    it.putInt("playerNumber", allData.playerNumber)
-//                    arguments = it
-//                }
                 replace(R.id.frame_container_main, this)
             }
             commit()
@@ -43,7 +39,7 @@ class MainGameActivity : AppCompatActivity(), OnFragmentListener {
         when(buttonId) {
             R.id.playerNotificationTV -> supportFragmentManager.beginTransaction().apply {
                 setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
-                replace(R.id.frame_container_main, DiceFragment(this@MainGameActivity as OnFragmentListener))
+                replace(R.id.frame_container_main, DiceFragment(this@MainGameActivity as OnFragmentListener, allData))
                 commit()
             }
             R.id.generateSidesButton -> supportFragmentManager.beginTransaction().apply {
@@ -54,10 +50,7 @@ class MainGameActivity : AppCompatActivity(), OnFragmentListener {
                 commit()
             }
             R.id.nextTurnButton -> {
-                allData.apply {
-                    if (playerNumber == playerCount) playerNumber = 1 else playerNumber++
-//                    Log.d("my", "playerNumber_nextTurn: $playerNumber")
-                }
+                allData.nextPlayer()
                 nextTurn()
             }
             R.id.mySurfaceView -> {
@@ -77,13 +70,6 @@ class MainGameActivity : AppCompatActivity(), OnFragmentListener {
                 }
             }
         }
-    }
-
-    override fun onParamsSelected(params: Map<String, String>) {
-        allData.rectWidth = params["rectWidth"]?.toInt() ?: 0
-        allData.rectHeight = params["rectHeight"]?.toInt() ?: 0
-//        Log.d("my", "rectWidthFromDiceActivity: $rectWidth")
-//        Log.d("my", "rectHeightFromDiceActivity: $rectHeight")
     }
 
     override fun onBackPressed() {
