@@ -12,7 +12,7 @@ class DiceFragmentTest {
 
     @Test
     fun onClick() {
-        val diceFragment = DiceFragment(OnFragmentListenerStub())
+        val diceFragment = DiceFragment(OnFragmentListenerStub(), MyAppData())
         launchFragmentInContainer {
             diceFragment
         }
