@@ -30,7 +30,6 @@ class StartFragment(private val listener: OnFragmentListener) : Fragment(), View
     }
 
     override fun onClick(view: View) {
-
         when(view.id) {
             R.id.startButton -> listener.onButtonSelected(R.id.startButton)
             R.id.regulationsButton -> listener.onButtonSelected(R.id.regulationsButton)

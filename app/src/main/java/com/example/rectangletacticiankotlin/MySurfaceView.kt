@@ -81,7 +81,7 @@ class MySurfaceView(context: Context, attrs: AttributeSet?) :
                         }
                     } else {
                         notSpaceCanDraw = true
-                        allData.rectLocationChecker(allData.rectDrawNow, true, allData.listener)
+                        allData.rectLocationChecker(allData.rectDrawNow, true)
                     }
 
                     drawPlayerRectNow(canvas)
