@@ -9,7 +9,7 @@ class MyAppDataTest {
 
     @Test
     fun corners() {
-        val myAppData = MyAppData()
+        val myAppData = MyAppDataStub()
         val rectangles = listOf(
             RectF(0f, 0f, 35f, 35f),
             RectF(0f, 35f, 35f, 50f),

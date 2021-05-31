@@ -10,21 +10,11 @@ import org.junit.Test
 
 class MainGameFragmentTest {// Process crashed. All test terminate
 
-    private val allData = MyAppData()
-
-    @Test
-    fun exceptionTVNoException() {
-        val mainGameFragment = MainGameFragment(OnFragmentListenerStub(), allData)
-        launchFragmentInContainer {
-            mainGameFragment
-        }
-        mainGameFragment.exceptionTVNoException()
-        onView(withId(R.id.exceptionTV)).check(matches(withText(R.string.exceptionTV_good_text)))
-    }
+    private val allDataStub = MyAppDataStub()
 
     @Test
     fun exceptionTVNoRectangle() {
-        val mainGameFragment = MainGameFragment(OnFragmentListenerStub(), allData)
+        val mainGameFragment = MainGameFragment(allDataStub)
         launchFragmentInContainer {
             mainGameFragment
         }
@@ -33,41 +23,56 @@ class MainGameFragmentTest {// Process crashed. All test terminate
     }
 
     @Test
-    fun exceptionTVOutOfBounds() {
-        val mainGameFragment = MainGameFragment(OnFragmentListenerStub(), allData)
+    fun exceptionTVNoException() {
+        val mainGameFragment = MainGameFragment(allDataStub)
         launchFragmentInContainer {
             mainGameFragment
         }
+        //надо пставить прямоугольник
+        mainGameFragment.exceptionTVNoException()
+        onView(withId(R.id.exceptionTV)).check(matches(withText(R.string.exceptionTV_good_text)))
+    }
+
+    @Test
+    fun exceptionTVOutOfBounds() {
+        val mainGameFragment = MainGameFragment(allDataStub)
+        launchFragmentInContainer {
+            mainGameFragment
+        }
+        //надо поставить прямоугольник за границами
         mainGameFragment.exceptionTVOutOfBounds()
         onView(withId(R.id.exceptionTV)).check(matches(withText(R.string.exceptionTV_bad_OutOfBoundsException_text)))
     }
 
     @Test
     fun exceptionTVLocation() {
-        val mainGameFragment = MainGameFragment(OnFragmentListenerStub(), allData)
+        val mainGameFragment = MainGameFragment(allDataStub)
         launchFragmentInContainer {
             mainGameFragment
         }
+        //надо поставить не первый прямоугольник либо внутри другого, либо не прикасаясь ни к кому
         mainGameFragment.exceptionTVLocation()
         onView(withId(R.id.exceptionTV)).check(matches(withText(R.string.exceptionTV_bad_LocationException_text)))
     }
 
     @Test
     fun exceptionTVLocationFirstRect() {
-        val mainGameFragment = MainGameFragment(OnFragmentListenerStub(), allData)
+        val mainGameFragment = MainGameFragment(allDataStub)
         launchFragmentInContainer {
             mainGameFragment
         }
+        //поставить первый прямоугольник не в своём углу
         mainGameFragment.exceptionTVLocationFirstRect()
         onView(withId(R.id.exceptionTV)).check(matches(withText(R.string.exceptionTV_bad_LocationException_firstRect_text)))
     }
 
     @Test
     fun exceptionTVNotFreeSpace() {
-        val mainGameFragment = MainGameFragment(OnFragmentListenerStub(), allData)
+        val mainGameFragment = MainGameFragment(allDataStub)
         launchFragmentInContainer {
             mainGameFragment
         }
+        //заставить всю полощадь прямоугольниками
         mainGameFragment.exceptionTVNoFreeSpace()
         onView(withId(R.id.exceptionTV)).check(matches(withText(R.string.exceptionTV_neutral_NotFreeSpaceException_text)))
     }
@@ -75,7 +80,7 @@ class MainGameFragmentTest {// Process crashed. All test terminate
     @Test
     fun onClick() {
         launchFragmentInContainer {
-            MainGameFragment(OnFragmentListenerStub(), allData)
+            MainGameFragment(allDataStub)
         }
         onView(withId(R.id.rotationButton)).perform(click())
         onView(withId(R.id.nextTurnButton)).perform(click())

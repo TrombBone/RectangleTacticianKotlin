@@ -11,7 +11,7 @@ class PlayerStartFragmentTest {
     @Test
     fun onTouch() {
         launchFragmentInContainer {
-            PlayerStartFragment(OnFragmentListenerStub(), MyAppData().playerNumber)
+            PlayerStartFragment(OnFragmentListenerStub(), MyAppDataStub().playerNumber)
         }
         onView(withId(R.id.playerNotificationTV)).perform(click())
     }
