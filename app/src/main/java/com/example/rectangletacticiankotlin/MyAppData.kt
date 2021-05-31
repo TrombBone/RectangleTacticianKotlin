@@ -2,33 +2,43 @@ package com.example.rectangletacticiankotlin
 
 import android.graphics.PointF
 import android.graphics.RectF
+import kotlin.random.Random
 
-class MyAppData {
+open class MyAppData(var playerCount: Int, var fieldWidth: Int, var fieldHeight: Int) {
 
-    var playerCount = 0
     var playerNumber = 1
 
-    var fieldWidth = 0
-    var fieldHeight = 0
+    var cellSize = 0f
+    private var rectDrawNow = RectF()
+    val playersRectangles = mutableMapOf<Int, MutableList<RectF>>()
 
-    var rectWidth = 0
-    var rectHeight = 0
-
-    var playersRectangles = mutableMapOf<Int, MutableList<RectF>>()
-
+    var isRunning = true
     var isEndGame = false
 //    var lastTouch = false
 
-    var cellSize = 0f
-    var rectDrawNow = RectF()
+    lateinit var buttonListener: OnFragmentListener
+    lateinit var exceptionListener: OnExceptionHintListener
 
-    var isRunning = true
+    private var rectWidth = 0
+    private var rectHeight = 0
 
-    lateinit var mainGameFragment: MainGameFragment
-    lateinit var listener: OnExceptionHintListener
+    fun setRectDrawNowSizes() {
+        this.rectWidth = Random.nextInt(1, 7)
+        this.rectHeight = Random.nextInt(1, 7)
+    }
+    fun getRectDrawNowSizes() = Pair(this.rectWidth, this.rectHeight)
 
     fun nextPlayer() {
         if (playerNumber == playerCount) playerNumber = 1 else playerNumber++
+    }
+
+    fun nextTurn() {
+        playersRectangles.getOrPut(playerNumber, { mutableListOf() }).add(rectDrawNow)
+        if (isEndGame && playerNumber == playerCount) {
+//            lastTouch = true
+            buttonListener.onButtonSelected(R.id.mySurfaceView)// id of this surfaceView
+        } else buttonListener.onButtonSelected(R.id.nextTurnButton)// next turn
+        isRunning = false
     }
 
     fun rotateRect() {
@@ -59,7 +69,7 @@ class MyAppData {
     }
 
     private fun checkFirstRect(conditional: Boolean, isShowExceptionHint: Boolean): Boolean {
-        listener.apply {
+        exceptionListener.apply {
             if (conditional) {
                 if (isShowExceptionHint) onExceptionSelected(TV_BAD_LOCATION_FIRST_RECT)
             } else {
@@ -70,8 +80,10 @@ class MyAppData {
         return false
     }
 
-    fun rectLocationChecker(rectF: RectF, isShowExceptionHint: Boolean): Boolean {
-        listener.apply {
+
+    private fun rectLocationChecker(rectF: RectF, isShowExceptionHint: Boolean): Boolean {
+        rectDrawNow = rectF
+        exceptionListener.apply {
             if (rectF.isEmpty) {
                 if (isShowExceptionHint) onExceptionSelected(TV_BAD_NO_RECT)
             } else if (rectF.left < 0 || rectF.top < 0 ||
@@ -144,6 +156,8 @@ class MyAppData {
         }
         return false// after the first three "if", else never
     }
+
+    fun rectLocationChecker(rectF: RectF) = rectLocationChecker(rectF, true)
 
     fun isFreeSpace(): Boolean {
         if (playersRectangles[1] == null || playersRectangles[2] == null ||
