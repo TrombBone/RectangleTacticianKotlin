@@ -10,7 +10,6 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import java.util.*
 import kotlin.concurrent.schedule
-import kotlin.random.Random
 
 class DiceFragment(private val listener: OnFragmentListener, private val allData: MyAppData) : Fragment(), View.OnClickListener {
 
@@ -37,25 +36,23 @@ class DiceFragment(private val listener: OnFragmentListener, private val allData
         mediaPlayer.start()
         generateButton.isEnabled = false
 
-        var rectWidth = ""
-        var rectHeight = ""
         for (i in 1..5) {
             var del = 0
             if (i == 5) del = 300
             Timer().schedule((230 * i + del).toLong()) {
                 activity?.runOnUiThread {
-                    rectWidth = Random.nextInt(1, 7).toString()
-                    rectHeight = Random.nextInt(1, 7).toString()
-                    sideWidthTV.text = rectWidth
-                    sideHeightTV.text = rectHeight
+                    allData.apply {
+                        setRectDrawNowSizes()
+                        val rectDrawNowSizes = getRectDrawNowSizes()
+                        sideWidthTV.text = rectDrawNowSizes.first.toString()
+                        sideHeightTV.text = rectDrawNowSizes.second.toString()
+                    }
                 }
             }
         }
 
         Timer().schedule(2500) {
             mediaPlayer.stop()
-            allData.rectWidth = rectWidth.toInt()
-            allData.rectHeight = rectHeight.toInt()
             listener.onButtonSelected(R.id.generateSidesButton)
         }
     }

@@ -17,7 +17,7 @@ const val TV_BAD_LOCATION = "location"
 const val TV_BAD_LOCATION_FIRST_RECT = "locationFirstRect"
 const val TV_NEUTRAL_NO_FREE_SPACE = "noFreeSpace"
 
-class MainGameFragment(private val listener: OnFragmentListener, private val allData: MyAppData) :
+class MainGameFragment(private val allData: MyAppData) :
     Fragment(), View.OnClickListener, OnExceptionHintListener {
 
     private lateinit var linearLayout: LinearLayout
@@ -45,7 +45,8 @@ class MainGameFragment(private val listener: OnFragmentListener, private val all
         mySurfaceView.mainGameFragment = this
         mySurfaceView.allData = allData
 
-        allData.listener = this
+        allData.exceptionListener = this
+        allData.buttonListener = requireActivity() as OnFragmentListener
 /*
         allData.apply {
             Log.d("my", "playerCountMainGameFragment: $playerCount")
@@ -97,22 +98,9 @@ class MainGameFragment(private val listener: OnFragmentListener, private val all
     }
 
     override fun onClick(view: View) {
-//        val listener = activity as OnFragmentListener?
         when (view.id) {
             R.id.rotationButton -> allData.rotateRect()
-            R.id.nextTurnButton -> {
-                if (isNotException) {
-                    allData.apply {
-                        playersRectangles.getOrPut(playerNumber, { mutableListOf() }).add(rectDrawNow)
-                        if (isEndGame && playerNumber == playerCount) {
-//                            lastTouch = true
-                            this@MainGameFragment.listener.onButtonSelected(R.id.mySurfaceView)// id of this surfaceView
-                        } else this@MainGameFragment.listener.onButtonSelected(R.id.nextTurnButton)// next turn
-                        isRunning = false
-//                      Log.d("my", "playersRectangles: $playersRectangles")
-                    }
-                }
-            }
+            R.id.nextTurnButton -> if (isNotException) allData.nextTurn()
         }
     }
 

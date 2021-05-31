@@ -27,6 +27,7 @@ class MySurfaceView(context: Context, attrs: AttributeSet?) :
     private var canvasWidth = 0
     private var canvasHeight = 0
     private var cellSize = 0f
+    private var rectDrawNow = RectF()
 
     lateinit var mainGameFragment: MainGameFragment
 
@@ -81,7 +82,7 @@ class MySurfaceView(context: Context, attrs: AttributeSet?) :
                         }
                     } else {
                         notSpaceCanDraw = true
-                        allData.rectLocationChecker(allData.rectDrawNow, true)
+                        allData.rectLocationChecker(rectDrawNow)
                     }
 
                     drawPlayerRectNow(canvas)
@@ -187,6 +188,8 @@ class MySurfaceView(context: Context, attrs: AttributeSet?) :
                     ty -= cellSize
                 }
                 allData.apply {
+                    val rectWidth = getRectDrawNowSizes().first
+                    val rectHeight = getRectDrawNowSizes().second
                     when (playerNumber) {
                         1 -> {
                             p.color = resources.getColor(R.color.player1, resources.newTheme())
@@ -210,8 +213,9 @@ class MySurfaceView(context: Context, attrs: AttributeSet?) :
                         }
                     }
                     p.style = Paint.Style.FILL
-                    allData.rectDrawNow = RectF(x, y, x + cellSize * rectWidth, y + cellSize * rectHeight)
-                    canvas.drawRect(allData.rectDrawNow, p)
+                    rectDrawNow = RectF(x, y, x + cellSize * rectWidth, y + cellSize * rectHeight)
+                    //allData.setRectDrawNow(rectDrawNow)
+                    canvas.drawRect(rectDrawNow, p)
                     when (playerNumber) {
                         1 -> p.color = resources.getColor(R.color.player1_border, resources.newTheme())
                         2 -> p.color = resources.getColor(R.color.player2_border, resources.newTheme())
@@ -237,8 +241,7 @@ class MySurfaceView(context: Context, attrs: AttributeSet?) :
     private lateinit var dt: DrawThread
 
     override fun surfaceCreated(holder: SurfaceHolder) {
-        allData.mainGameFragment = mainGameFragment
-        allData.rectDrawNow = RectF()
+        //allData.setRectDrawNow(RectF())
         dt = DrawThread(holder)
         dt.start()
     }

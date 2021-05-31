@@ -6,7 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 
 class MainGameActivity : AppCompatActivity(), OnFragmentListener {
 
-    var allData = MyAppData()
+    private lateinit var allData: MyAppData
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -14,11 +14,13 @@ class MainGameActivity : AppCompatActivity(), OnFragmentListener {
         supportActionBar?.hide() ?: throw NoSuchElementException("ActionBar is lack")
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
-        nextTurn()
+        allData = MyAppData(
+            intent.getIntExtra(TAG_PLAYER_COUNT, PLAYER_COUNT_DEFAULT),
+            intent.getIntExtra(TAG_FIELD_WIDTH, FIELD_WIDTH_DEFAULT),
+            intent.getIntExtra(TAG_FIELD_HEIGHT, FIELD_HEIGHT_DEFAULT)
+        )
 
-        allData.playerCount = intent.getIntExtra(TAG_PLAYER_COUNT, PLAYER_COUNT_DEFAULT)
-        allData.fieldWidth = intent.getIntExtra(TAG_FIELD_WIDTH, FIELD_WIDTH_DEFAULT)
-        allData.fieldHeight = intent.getIntExtra(TAG_FIELD_HEIGHT, FIELD_HEIGHT_DEFAULT)
+        nextTurn()
 
 //        Log.d("my", "playerCount_MainGameActivity: $playerCount")
 //        Log.d("my", "fieldWidth_MainGameActivity: $fieldWidth")
@@ -44,7 +46,7 @@ class MainGameActivity : AppCompatActivity(), OnFragmentListener {
             }
             R.id.generateSidesButton -> supportFragmentManager.beginTransaction().apply {
                 setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
-                MainGameFragment(this@MainGameActivity as OnFragmentListener, allData).apply {
+                MainGameFragment(allData).apply {
                     replace(R.id.frame_container_main, this)
                 }
                 commit()
